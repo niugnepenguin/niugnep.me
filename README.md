@@ -2,7 +2,7 @@
 # Penguin the Network Engineer
 
 ## About Me
-I am Penguin, a passionate Network Engineer with a knack for solving complex networking challenges. My expertise lies in designing, implementing, and troubleshooting networks to ensure seamless connectivity and security.
+I am Penguin, a passionate Network Engineer and former IT Director with a knack for solving complex networking and infrastructure challenges. My expertise lies in designing, implementing, and troubleshooting systems to ensure seamless connectivity and security. In my free time I enjoy expanding my home lab with the goal of learning and implementing technologies not currently in deployment in my professional life and working on projects that advocate in favor of user privacy, ownership, and right-to-repair frameworks.
 
 ## Projects
 ### Project 1: [Project Name]
@@ -26,10 +26,8 @@ I am Penguin, a passionate Network Engineer with a knack for solving complex net
 - Network Security (Firewalls, VPNs)
 - Network Monitoring and Optimization
 - Scripting (Python, Bash)
-
-## Certifications
-- Cisco Certified Network Associate (CCNA)
-- [Add more certifications as applicable]
+- IAC (Terraform, Docker-Compose)
+- 
 
 ## Contact Me
 - **Email:** 
