@@ -461,20 +461,40 @@
         
         <section id="contact">
             <h2>Contact Me</h2>
-            <div class="contact-info">
-                <div class="contact-item">
-                    <div class="contact-icon">✉️</div>
-                    <div>
-                        <h3>Email</h3>
-                        <p>hello@niugnep.me</p>
-                    </div>
+            <div class="contact-item">
+                <div class="contact-icon">✉️</div>
+                <div>
+                    <h3>Email</h3>
+                    <a id="email-link" href="#">
+                        <script>
+                            const encodedUser = '68656c6c6f';
+                            const encodedDomain = '6e6975676e65702e6d65';
+                            
+                            const decodeHex = hex => {
+                                let str = '';
+                                for (let i = 0; i < hex.length; i += 2) {
+                                    str += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
+                                }
+                                return str;
+                            };
+                            
+                            const user = decodeHex(encodedUser);
+                            const domain = decodeHex(encodedDomain);
+                            
+                            const emailAddress = user + '@' + domain;
+                            
+                            document.currentScript.parentNode.innerHTML = emailAddress;
+                            document.getElementById('email-link').href = 'mailto:' + emailAddress;
+                        </script>
+                    </a>
                 </div>
+            </div>
                 
                 <div class="contact-item">
                     <div class="contact-icon">💼</div>
                     <div>
                         <h3>LinkedIn</h3>
-                        <p>linkedin.com/in/soonTM</p>
+                        <a href="https://linkedin.com/in/soonTM" target="_blank" rel="noopener noreferrer">linkedin.com/in/soonTM</a>
                     </div>
                 </div>
                 
@@ -482,7 +502,7 @@
                     <div class="contact-icon">🐙</div>
                     <div>
                         <h3>GitHub</h3>
-                        <p>github.com/niugnepenguin</p>
+                        <a href="github.com/niugnepenguin" target="_blank" rel="noopener noreferrer">linkedin.com/in/soonTM</a
                     </div>
                 </div>
             </div>
