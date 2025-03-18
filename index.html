@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Penguin | Network Engineer</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #34495e;
+            --text-color: #333;
+            --container-width: 1000px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--light-color);
+        }
+        
+        .container {
+            width: 90%;
+            max-width: var(--container-width);
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+        }
+        
+        header .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        nav {
+            background-color: var(--dark-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        nav ul {
+            display: flex;
+            justify-content: center;
+            list-style: none;
+        }
+        
+        nav li {
+            padding: 1rem;
+        }
+        
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+        
+        nav a:hover {
+            color: var(--secondary-color);
+        }
+        
+        section {
+            margin-bottom: 3rem;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+        }
+        
+        h2 {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--secondary-color);
+        }
+        
+        .about-content {
+            display: flex;
+            gap: 2rem;
+            align-items: flex-start;
+        }
+        
+        .about-image {
+            flex: 0 0 200px;
+        }
+        
+        .about-image img {
+            width: 100%;
+            border-radius: 50%;
+            border: 3px solid var(--secondary-color);
+        }
+        
+        .about-text {
+            flex: 1;
+        }
+        
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .skill-category {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 1.2rem;
+            border-left: 4px solid var(--secondary-color);
+        }
+        
+        .skill-category h3 {
+            color: var(--primary-color);
+            margin-bottom: 0.8rem;
+            font-size: 1.2rem;
+        }
+        
+        .skill-category ul {
+            list-style-type: none;
+        }
+        
+        .skill-category li {
+            padding: 0.3rem 0;
+            display: flex;
+            align-items: center;
+        }
+        
+        .skill-category li:before {
+            content: "•";
+            color: var(--secondary-color);
+            font-weight: bold;
+            display: inline-block;
+            width: 1em;
+            margin-right: 0.5em;
+        }
+        
+        .projects-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .project-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .project-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .project-card .project-image {
+            height: 180px;
+            background-color: var(--secondary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+        }
+        
+        .project-content {
+            padding: 1.5rem;
+        }
+        
+        .project-content h3 {
+            margin-bottom: 0.8rem;
+            color: var(--primary-color);
+        }
+        
+        .project-content p {
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+        }
+        
+        .tech-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .tech-tag {
+            background-color: #edf2f7;
+            color: var(--dark-color);
+            padding: 0.3rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+        }
+        
+        .project-links {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .project-link {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background-color: var(--secondary-color);
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            transition: background-color 0.3s;
+        }
+        
+        .project-link:hover {
+            background-color: var(--primary-color);
+        }
+        
+        .contact-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+        
+        .contact-item {
+            flex: 1 0 200px;
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .contact-icon {
+            width: 50px;
+            height: 50px;
+            background-color: var(--secondary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            margin-right: 1rem;
+            font-size: 1.5rem;
+        }
+        
+        footer {
+            background-color: var(--primary-color);
+            color: white;
+            text-align: center;
+            padding: 1.5rem 0;
+            margin-top: 3rem;
+        }
+        
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2rem;
+            }
+            
+            nav ul {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .about-content {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .about-image {
+                flex: 0 0 150px;
+                margin-bottom: 1rem;
+            }
+            
+            .projects-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Penguin the Network Engineer</h1>
+            <p>Designing, implementing, and troubleshooting robust network solutions</p>
+        </div>
+    </header>
+    
+    <nav>
+        <ul>
+            <li><a href="#about">About</a></li>
+            <li><a href="#skills">Skills</a></li>
+            <li><a href="#projects">Projects</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+    </nav>
+    
+    <div class="container">
+        <section id="about">
+            <h2>About Me</h2>
+            <div class="about-content">
+                <div class="about-image">
+                    <img src="/api/placeholder/200/200" alt="Profile placeholder">
+                </div>
+                <div class="about-text">
+                    <p>I am Penguin, a passionate Network Engineer and former IT Director with over a decade of experience solving complex networking and infrastructure challenges. My expertise lies in designing, implementing, and troubleshooting systems to ensure seamless connectivity and security.</p>
+                    <p>In my free time, I enjoy expanding my home lab with the goal of learning and implementing technologies not currently in deployment in my professional life. I'm particularly focused on container orchestration, Infrastructure as Code, and network automation.</p>
+                    <p>I'm also committed to projects that advocate in favor of user privacy, ownership, and right-to-repair frameworks, believing that technology should empower users while respecting their rights.</p>
+                </div>
+            </div>
+        </section>
+        
+        <section id="skills">
+            <h2>Technical Skills</h2>
+            <div class="skills-grid">
+                <div class="skill-category">
+                    <h3>Network Infrastructure</h3>
+                    <ul>
+                        <li>Network Design and Architecture</li>
+                        <li>Routing and Switching (Cisco, Juniper)</li>
+                        <li>Network Security (Firewalls, VPNs)</li>
+                        <li>Network Monitoring and Optimization</li>
+                    </ul>
+                </div>
+                
+                <div class="skill-category">
+                    <h3>Cloud & Virtualization</h3>
+                    <ul>
+                        <li>Docker Containerization</li>
+                        <li>Kubernetes (learning)</li>
+                        <li>Virtual Network Functions</li>
+                        <li>Cloud Network Architecture</li>
+                    </ul>
+                </div>
+                
+                <div class="skill-category">
+                    <h3>Infrastructure as Code</h3>
+                    <ul>
+                        <li>Terraform</li>
+                        <li>Docker-Compose</li>
+                        <li>Ansible</li>
+                        <li>CI/CD Pipeline Integration</li>
+                    </ul>
+                </div>
+                
+                <div class="skill-category">
+                    <h3>Operating Systems</h3>
+                    <ul>
+                        <li>Debian (Professional)</li>
+                        <li>Fedora (Home Lab)</li>
+                        <li>Network Operating Systems</li>
+                        <li>Server Administration</li>
+                    </ul>
+                </div>
+                
+                <div class="skill-category">
+                    <h3>Programming & Scripting</h3>
+                    <ul>
+                        <li>Python</li>
+                        <li>Bash</li>
+                        <li>Network Automation</li>
+                        <li>API Integration</li>
+                    </ul>
+                </div>
+                
+                <div class="skill-category">
+                    <h3>Security</h3>
+                    <ul>
+                        <li>Network Security Protocols</li>
+                        <li>Intrusion Detection/Prevention</li>
+                        <li>Security Auditing</li>
+                        <li>Zero Trust Architecture</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+        
+        <section id="projects">
+            <h2>Featured Projects</h2>
+            <div class="projects-container">
+                <div class="project-card">
+                    <div class="project-image">
+                        <span>🌐</span>
+                    </div>
+                    <div class="project-content">
+                        <h3>Home Lab Network Automation</h3>
+                        <p>A comprehensive setup that automates network configuration and monitoring in my personal home lab environment using IaC principles.</p>
+                        <div class="tech-tags">
+                            <span class="tech-tag">Ansible</span>
+                            <span class="tech-tag">Python</span>
+                            <span class="tech-tag">Fedora</span>
+                            <span class="tech-tag">Docker</span>
+                        </div>
+                        <div class="project-links">
+                            <a href="#" class="project-link">Repository</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="project-card">
+                    <div class="project-image">
+                        <span>🔐</span>
+                    </div>
+                    <div class="project-content">
+                        <h3>Zero Trust Network Implementation</h3>
+                        <p>Designed and implemented a zero trust architecture for securing access to critical resources across distributed networks.</p>
+                        <div class="tech-tags">
+                            <span class="tech-tag">VPN</span>
+                            <span class="tech-tag">Firewalls</span>
+                            <span class="tech-tag">IAM</span>
+                            <span class="tech-tag">Micro-segmentation</span>
+                        </div>
+                        <div class="project-links">
+                            <a href="#" class="project-link">Case Study</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="project-card">
+                    <div class="project-image">
+                        <span>🐳</span>
+                    </div>
+                    <div class="project-content">
+                        <h3>Containerized Network Services</h3>
+                        <p>Migrated traditional network services to containerized deployments, improving scalability and deployment consistency.</p>
+                        <div class="tech-tags">
+                            <span class="tech-tag">Docker</span>
+                            <span class="tech-tag">Terraform</span>
+                            <span class="tech-tag">Kubernetes</span>
+                            <span class="tech-tag">Docker-Compose</span>
+                        </div>
+                        <div class="project-links">
+                            <a href="#" class="project-link">Repository</a>
+                            <a href="#" class="project-link">Documentation</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="contact">
+            <h2>Contact Me</h2>
+            <div class="contact-info">
+                <div class="contact-item">
+                    <div class="contact-icon">✉️</div>
+                    <div>
+                        <h3>Email</h3>
+                        <p>contact@penguin-network.example</p>
+                    </div>
+                </div>
+                
+                <div class="contact-item">
+                    <div class="contact-icon">💼</div>
+                    <div>
+                        <h3>LinkedIn</h3>
+                        <p>linkedin.com/in/penguin-network</p>
+                    </div>
+                </div>
+                
+                <div class="contact-item">
+                    <div class="contact-icon">🐙</div>
+                    <div>
+                        <h3>GitHub</h3>
+                        <p>github.com/penguin-network</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    
+    <footer>
+        <div class="container">
+            <p>© 2024 Penguin the Network Engineer | All Rights Reserved</p>
+        </div>
+    </footer>
+</body>
+</html>
