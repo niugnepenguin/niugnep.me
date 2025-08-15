@@ -3,16 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Penguin | Network Engineer</title>
+    <title>niugnep.me | Infrastructure Lab & Digital Workshop</title>
+    <meta name="description" content="Penguin's digital workshop - Infrastructure engineering, homelab experiments, and the ongoing quest to understand how things really work.">
     <style>
         :root {
-            --primary-color: #2c3e50;
-            --secondary-color: #3498db;
-            --accent-color: #e74c3c;
-            --light-color: #ecf0f1;
-            --dark-color: #34495e;
-            --text-color: #333;
-            --container-width: 1000px;
+            --bg-dark: #0a0e1a;
+            --bg-medium: #141922;
+            --bg-light: #1e2431;
+            --accent-primary: #00ff88;
+            --accent-secondary: #00aaff;
+            --accent-warm: #ff6b35;
+            --text-primary: #e4e6eb;
+            --text-secondary: #8892a0;
+            --border-color: #2a3142;
+            --code-bg: #0d1117;
+            --success: #39d353;
+            --warning: #ffa500;
+            --error: #ff4444;
         }
         
         * {
@@ -22,498 +29,803 @@
         }
         
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Courier New', 'SF Mono', 'Monaco', monospace;
+            background: var(--bg-dark);
+            color: var(--text-primary);
             line-height: 1.6;
-            color: var(--text-color);
-            background-color: var(--light-color);
+            overflow-x: hidden;
         }
-        
+
+        /* Matrix-style background animation */
+        .matrix-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            opacity: 0.03;
+            z-index: 0;
+            background-image: 
+                repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 2px,
+                    var(--accent-primary) 2px,
+                    var(--accent-primary) 4px
+                );
+            animation: matrix-scroll 20s linear infinite;
+        }
+
+        @keyframes matrix-scroll {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(100px); }
+        }
+
         .container {
-            width: 90%;
-            max-width: var(--container-width);
+            max-width: 1400px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 0 20px;
+            position: relative;
+            z-index: 1;
         }
-        
+
+        /* Terminal-style header */
         header {
-            background-color: var(--primary-color);
-            color: white;
             padding: 2rem 0;
-            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--border-color);
+            background: linear-gradient(180deg, var(--bg-medium) 0%, var(--bg-dark) 100%);
         }
-        
-        header .container {
+
+        .terminal-header {
+            background: var(--code-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1rem;
+            font-family: 'Courier New', monospace;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .terminal-bar {
             display: flex;
-            flex-direction: column;
             align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border-color);
         }
-        
-        header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 0.5rem;
+
+        .terminal-dots {
+            display: flex;
+            gap: 8px;
         }
-        
-        header p {
-            font-size: 1.2rem;
-            opacity: 0.9;
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
         }
-        
+
+        .dot.red { background: #ff5f56; }
+        .dot.yellow { background: #ffbd2e; }
+        .dot.green { background: #27c93f; }
+
+        .terminal-title {
+            flex: 1;
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .terminal-content {
+            color: var(--accent-primary);
+        }
+
+        .prompt {
+            color: var(--text-secondary);
+        }
+
+        .command {
+            color: var(--accent-secondary);
+        }
+
+        .output {
+            color: var(--text-primary);
+            margin: 0.5rem 0;
+        }
+
+        .ascii-art {
+            color: var(--accent-primary);
+            font-size: 0.8rem;
+            line-height: 1.2;
+            margin: 1rem 0;
+            white-space: pre;
+        }
+
+        /* Navigation */
         nav {
-            background-color: var(--dark-color);
+            background: var(--bg-medium);
+            padding: 1rem 0;
             position: sticky;
             top: 0;
             z-index: 100;
+            border-bottom: 1px solid var(--border-color);
+            backdrop-filter: blur(10px);
+            background: rgba(20, 25, 34, 0.95);
         }
-        
+
         nav ul {
             display: flex;
-            justify-content: center;
             list-style: none;
+            gap: 2rem;
+            justify-content: center;
+            flex-wrap: wrap;
         }
-        
-        nav li {
-            padding: 1rem;
-        }
-        
+
         nav a {
-            color: white;
+            color: var(--text-secondary);
             text-decoration: none;
-            font-weight: 600;
             transition: color 0.3s;
+            position: relative;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
         }
-        
+
         nav a:hover {
-            color: var(--secondary-color);
+            color: var(--accent-primary);
         }
-        
-        section {
-            margin-bottom: 3rem;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: var(--accent-primary);
+            transition: width 0.3s;
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        /* Main content sections */
+        .content-section {
+            margin: 3rem 0;
             padding: 2rem;
+            background: var(--bg-medium);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            position: relative;
         }
-        
+
+        .content-section::before {
+            content: attr(data-section);
+            position: absolute;
+            top: -12px;
+            left: 20px;
+            background: var(--bg-medium);
+            padding: 0 10px;
+            color: var(--accent-primary);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
         h2 {
-            color: var(--primary-color);
+            color: var(--accent-primary);
             font-size: 1.8rem;
             margin-bottom: 1.5rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid var(--secondary-color);
-        }
-        
-        .about-content {
-            display: flex;
-            gap: 2rem;
-            align-items: flex-start;
-        }
-        
-        .about-image {
-            flex: 0 0 200px;
-        }
-        
-        .about-image img {
-            width: 100%;
-            border-radius: 50%;
-            border: 3px solid var(--secondary-color);
-        }
-        
-        .about-text {
-            flex: 1;
-        }
-        
-        .skills-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 1.5rem;
-        }
-        
-        .skill-category {
-            background-color: #f8f9fa;
-            border-radius: 8px;
-            padding: 1.2rem;
-            border-left: 4px solid var(--secondary-color);
-        }
-        
-        .skill-category h3 {
-            color: var(--primary-color);
-            margin-bottom: 0.8rem;
-            font-size: 1.2rem;
-        }
-        
-        .skill-category ul {
-            list-style-type: none;
-        }
-        
-        .skill-category li {
-            padding: 0.3rem 0;
+            font-weight: normal;
             display: flex;
             align-items: center;
+            gap: 1rem;
         }
-        
-        .skill-category li:before {
-            content: "•";
-            color: var(--secondary-color);
-            font-weight: bold;
-            display: inline-block;
-            width: 1em;
-            margin-right: 0.5em;
+
+        h2::before {
+            content: '>';
+            color: var(--accent-secondary);
         }
-        
-        .projects-container {
+
+        /* Status Dashboard */
+        .status-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 1.5rem;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
         }
-        
-        .project-card {
-            border: 1px solid #ddd;
-            border-radius: 8px;
+
+        .status-card {
+            background: var(--bg-light);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 1rem;
+            position: relative;
             overflow: hidden;
-            transition: transform 0.3s, box-shadow 0.3s;
         }
-        
-        .project-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+
+        .status-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--success);
         }
-        
-        .project-card .project-image {
-            height: 180px;
-            background-color: var(--secondary-color);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 2rem;
+
+        .status-card.learning::before {
+            background: var(--warning);
         }
-        
-        .project-content {
+
+        .status-card.planned::before {
+            background: var(--accent-secondary);
+        }
+
+        .status-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .status-value {
+            font-size: 1.5rem;
+            color: var(--accent-primary);
+            margin: 0.5rem 0;
+            font-weight: bold;
+        }
+
+        .status-detail {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        /* Project logs */
+        .project-log {
+            background: var(--code-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
             padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            position: relative;
         }
-        
-        .project-content h3 {
-            margin-bottom: 0.8rem;
-            color: var(--primary-color);
-        }
-        
-        .project-content p {
+
+        .project-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
             margin-bottom: 1rem;
-            font-size: 0.95rem;
         }
-        
-        .tech-tags {
+
+        .project-title {
+            color: var(--accent-secondary);
+            font-size: 1.3rem;
+            font-weight: normal;
+        }
+
+        .project-meta {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .meta-tag {
+            background: var(--bg-light);
+            border: 1px solid var(--border-color);
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .meta-tag.active {
+            border-color: var(--success);
+            color: var(--success);
+        }
+
+        .meta-tag.wip {
+            border-color: var(--warning);
+            color: var(--warning);
+        }
+
+        .project-description {
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            line-height: 1.8;
+        }
+
+        .project-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .detail-block {
+            background: var(--bg-medium);
+            padding: 0.75rem;
+            border-radius: 4px;
+        }
+
+        .detail-label {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            margin-bottom: 0.25rem;
+        }
+
+        .detail-value {
+            color: var(--accent-primary);
+        }
+
+        /* Tech stack visualization */
+        .tech-stack {
             display: flex;
             flex-wrap: wrap;
             gap: 0.5rem;
-            margin-bottom: 1rem;
+            margin: 1rem 0;
         }
-        
-        .tech-tag {
-            background-color: #edf2f7;
-            color: var(--dark-color);
-            padding: 0.3rem 0.6rem;
+
+        .tech-badge {
+            background: transparent;
+            border: 1px solid var(--accent-primary);
+            color: var(--accent-primary);
+            padding: 0.25rem 0.75rem;
             border-radius: 4px;
             font-size: 0.85rem;
+            transition: all 0.3s;
         }
-        
-        .project-links {
-            display: flex;
-            gap: 1rem;
+
+        .tech-badge:hover {
+            background: var(--accent-primary);
+            color: var(--bg-dark);
+            transform: translateY(-2px);
         }
-        
-        .project-link {
-            display: inline-block;
-            padding: 0.5rem 1rem;
-            background-color: var(--secondary-color);
-            color: white;
-            text-decoration: none;
+
+        /* About/Philosophy section */
+        .philosophy-block {
+            background: linear-gradient(135deg, var(--bg-light), var(--bg-medium));
+            border-left: 3px solid var(--accent-primary);
+            padding: 1.5rem;
+            margin: 2rem 0;
             border-radius: 4px;
+        }
+
+        .philosophy-block h3 {
+            color: var(--accent-primary);
+            margin-bottom: 1rem;
+            font-weight: normal;
+        }
+
+        .philosophy-block p {
+            color: var(--text-primary);
+            line-height: 1.8;
+        }
+
+        /* Contact section */
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .contact-method {
+            background: var(--bg-light);
+            border: 1px solid var(--border-color);
+            padding: 1.5rem;
+            border-radius: 4px;
+            transition: border-color 0.3s;
+        }
+
+        .contact-method:hover {
+            border-color: var(--accent-primary);
+        }
+
+        .contact-label {
+            color: var(--text-secondary);
             font-size: 0.9rem;
-            transition: background-color 0.3s;
+            margin-bottom: 0.5rem;
         }
-        
-        .project-link:hover {
-            background-color: var(--primary-color);
+
+        .contact-value {
+            color: var(--accent-secondary);
+            font-size: 1.1rem;
+            word-break: break-all;
         }
-        
-        .contact-info {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 2rem;
+
+        .contact-value a {
+            color: inherit;
+            text-decoration: none;
         }
-        
-        .contact-item {
-            flex: 1 0 200px;
-            display: flex;
-            align-items: center;
-            padding: 1rem;
-            background-color: #f8f9fa;
-            border-radius: 8px;
+
+        .contact-value a:hover {
+            color: var(--accent-primary);
         }
-        
-        .contact-icon {
-            width: 50px;
-            height: 50px;
-            background-color: var(--secondary-color);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            margin-right: 1rem;
-            font-size: 1.5rem;
+
+        /* Lab notes / Blog style entries */
+        .lab-note {
+            background: var(--bg-light);
+            border: 1px solid var(--border-color);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-radius: 4px;
         }
-        
+
+        .note-date {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .note-title {
+            color: var(--accent-secondary);
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+
+        .note-content {
+            color: var(--text-primary);
+            line-height: 1.8;
+        }
+
+        /* Footer */
         footer {
-            background-color: var(--primary-color);
-            color: white;
+            margin-top: 4rem;
+            padding: 2rem 0;
+            border-top: 1px solid var(--border-color);
             text-align: center;
-            padding: 1.5rem 0;
-            margin-top: 3rem;
+            color: var(--text-secondary);
         }
-        
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .footer-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: var(--accent-primary);
+        }
+
+        /* Responsive */
         @media (max-width: 768px) {
-            header h1 {
-                font-size: 2rem;
+            .container {
+                padding: 0 15px;
             }
-            
+
             nav ul {
-                flex-direction: column;
-                align-items: center;
+                gap: 1rem;
             }
-            
-            .about-content {
-                flex-direction: column;
-                align-items: center;
+
+            .content-section {
+                padding: 1.5rem 1rem;
             }
-            
-            .about-image {
-                flex: 0 0 150px;
-                margin-bottom: 1rem;
+
+            .ascii-art {
+                font-size: 0.6rem;
             }
-            
-            .projects-container {
-                grid-template-columns: 1fr;
-            }
+        }
+
+        /* Utility classes */
+        .blink {
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        .monospace {
+            font-family: 'Courier New', monospace;
+        }
+
+        code {
+            background: var(--code-bg);
+            color: var(--accent-primary);
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            font-size: 0.9em;
         }
     </style>
 </head>
 <body>
+    <div class="matrix-bg"></div>
+    
     <header>
         <div class="container">
-            <h1>Penguin, Enjoyer of Technology</h1>
-            <p>Designing, implementing, and troubleshooting robust network and cloud solutions</p>
+            <div class="terminal-header">
+                <div class="terminal-bar">
+                    <div class="terminal-dots">
+                        <span class="dot red"></span>
+                        <span class="dot yellow"></span>
+                        <span class="dot green"></span>
+                    </div>
+                    <div class="terminal-title">penguin@niugnep:~</div>
+                </div>
+                <div class="terminal-content">
+                    <div>
+                        <span class="prompt">$</span>
+                        <span class="command"> whoami</span>
+                    </div>
+                    <pre class="ascii-art">
+    ___                            _        
+   / _ \  ___  _ __    __ _  _   _ (_) _ __  
+  / /_)/ / _ \| '_ \  / _` || | | || || '_ \ 
+ / ___/ |  __/| | | || (_| || |_| || || | | |
+ \/      \___||_| |_| \__, | \__,_||_||_| |_|
+                      |___/                   
+                    </pre>
+                    <div class="output">Infrastructure Engineer | Systems Architect | Professional Tinkerer</div>
+                    <div>
+                        <span class="prompt">$</span>
+                        <span class="command"> cat /etc/motd</span>
+                    </div>
+                    <div class="output">Welcome to my digital workshop. Here you'll find infrastructure experiments,</div>
+                    <div class="output">system architecture musings, and the ongoing quest to understand how things really work.</div>
+                    <div>
+                        <span class="prompt">$</span>
+                        <span class="command"> systemctl status curiosity.service</span>
+                    </div>
+                    <div class="output">● curiosity.service - Perpetual Learning Daemon</div>
+                    <div class="output">   Active: <span style="color: var(--success);">active (running)</span> since 1993-06-09 04:20:00 PST; many years ago<span class="blink">_</span></div>
+                </div>
+            </div>
         </div>
     </header>
-    
+
     <nav>
-        <ul>
-            <li><a href="#about">About</a></li>
-            <li><a href="#skills">Skills</a></li>
-            <li><a href="#projects">Projects</a></li>
-            <li><a href="#contact">Contact</a></li>
-        </ul>
-    </nav>
-    
-    <div class="container">
-        <section id="about">
-            <h2>About Me</h2>
-            <div class="about-content">
-                <div class="about-image">
-                    <img src="/api/placeholder/200/200" alt="Profile placeholder">
-                </div>
-                <div class="about-text">
-                    <p>I am Penguin, a passionate Network Engineer and former IT Director with over a decade of experience solving complex networking and infrastructure challenges. My expertise lies in designing, implementing, and troubleshooting systems to ensure seamless connectivity and security.</p>
-                    <p>In my free time, I enjoy expanding my home lab with the goal of learning and implementing technologies that I am not currently working with in my professional life or in many cases expanding upon that knowledge. I'm particularly focused on container orchestration, Infrastructure as Code, and automation. This extends to my home environment, where I've personally handled everything from structured cabling (Cat6a) to custom electrical work, embracing a hands-on approach to technology integration.</p>
-                    <p>Beyond technology, I'm an avid outdoor enthusiast who finds freedom in motorcycling, camping, and adeventures as a whole. This passion for independence aligns with my professional values — I'm a strong advocate for digital rights, user privacy, and the right-to-repair movement. My DIY ethos extends to vehicle maintenance and modification, reinforcing my belief that ownership should mean complete control, whether it's physical property or digital data.</p>
-                </div>
-            </div>
-        </section>
-        
-        <section id="skills">
-            <h2>Technical Skills</h2>
-            <div class="skills-grid">
-                <div class="skill-category">
-                    <h3>Network Infrastructure</h3>
-                    <ul>
-                        <li>Network Design and Architecture</li>
-                        <li>Routing and Switching (Cisco, Juniper)</li>
-                        <li>Traffic Analysis and Network Protocols</li>
-                        <li>Network Monitoring and Optimization</li>
-                    </ul>
-                </div>
-                
-                <div class="skill-category">
-                    <h3>Cloud & Virtualization</h3>
-                    <ul>
-                        <li>Docker Containerization</li>
-                        <li>Kubernetes (learning)</li>
-                        <li>Virtual Network Functions</li>
-                        <li>Cloud Network Architecture</li>
-                    </ul>
-                </div>
-                
-                <div class="skill-category">
-                    <h3>Infrastructure as Code</h3>
-                    <ul>
-                        <li>Terraform</li>
-                        <li>Docker-Compose</li>
-                        <li>Ansible</li>
-                        <li>CI/CD Pipeline Integration</li>
-                    </ul>
-                </div>
-                
-                <div class="skill-category">
-                    <h3>Virtualization & Systems</h3>
-                    <ul>
-                        <li>Proxmox, ESXi, and Nutanix</li>
-                        <li>Linux Administration (Debian, Fedora)</li>
-                        <li>Windows Server & Active Directory</li>
-                        <li>MDM Solutions (JAMF, Intune, Mosyle)</li>
-                    </ul>
-                </div>
-                
-                <div class="skill-category">
-                    <h3>Programming & Scripting</h3>
-                    <ul>
-                        <li>Python</li>
-                        <li>Bash</li>
-                        <li>Network Automation</li>
-                        <li>API Integration</li>
-                    </ul>
-                </div>
-                
-                <div class="skill-category">
-                    <h3>Security & Compliance</h3>
-                    <ul>
-                        <li>Firewall Configuration & Management</li>
-                        <li>VPN Implementation & Troubleshooting</li>
-                        <li>Zero Trust Architecture</li>
-                        <li>Security Posture Assessment</li>
-                    </ul>
-                </div>
-            </div>
-        </section>
-        
-        <section id="projects">
-            <h2>Featured Projects</h2>
-            <div class="projects-container">
-                <div class="project-card">
-                    <div class="project-image">
-                        <span>🌐</span>
-                    </div>
-                    <div class="project-content">
-                        <h3>Home Lab Network Automation</h3>
-                        <p>A comprehensive setup that automates network configuration and monitoring in my personal home lab environment using IaC principles.</p>
-                        <div class="tech-tags">
-                            <span class="tech-tag">Ansible</span>
-                            <span class="tech-tag">Python</span>
-                            <span class="tech-tag">Fedora</span>
-                            <span class="tech-tag">Docker</span>
-                        </div>
-                        <div class="project-links">
-                            <a href="#" class="project-link">Repository</a>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="project-card">
-                    <div class="project-image">
-                        <span>🔐</span>
-                    </div>
-                    <div class="project-content">
-                        <h3>Zero Trust Network Implementation</h3>
-                        <p>Designed and implemented a zero trust architecture for securing access to critical resources across distributed networks.</p>
-                        <div class="tech-tags">
-                            <span class="tech-tag">VPN</span>
-                            <span class="tech-tag">Firewalls</span>
-                            <span class="tech-tag">IAM</span>
-                            <span class="tech-tag">Micro-segmentation</span>
-                        </div>
-                        <div class="project-links">
-                            <a href="#" class="project-link">Case Study</a>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="project-card">
-                    <div class="project-image">
-                        <span>🐳</span>
-                    </div>
-                    <div class="project-content">
-                        <h3>Containerized Network Services</h3>
-                        <p>Migrated traditional network services to containerized deployments, improving scalability and deployment consistency.</p>
-                        <div class="tech-tags">
-                            <span class="tech-tag">Docker</span>
-                            <span class="tech-tag">Terraform</span>
-                            <span class="tech-tag">Kubernetes</span>
-                            <span class="tech-tag">Docker-Compose</span>
-                        </div>
-                        <div class="project-links">
-                            <a href="#" class="project-link">Repository</a>
-                            <a href="#" class="project-link">Documentation</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-        
-        <section id="contact">
-            <h2>Contact Me</h2>
-            <div class="contact-info">
-                <div class="contact-item">
-                    <div class="contact-icon">✉️</div>
-                    <div>
-                        <h3>Email</h3>
-                        <a id="email-link" href="#">
-                            <script>
-                                const encodedUser = '68656c6c6f';
-                                const encodedDomain = '6e6975676e65702e6d65';
-                                
-                                const decodeHex = hex => {
-                                    let str = '';
-                                    for (let i = 0; i < hex.length; i += 2) {
-                                        str += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
-                                    }
-                                    return str;
-                                };
-                                
-                                const user = decodeHex(encodedUser);
-                                const domain = decodeHex(encodedDomain);
-                                
-                                const emailAddress = user + '@' + domain;
-                                
-                                document.currentScript.parentNode.innerHTML = emailAddress;
-                                
-                                document.getElementById('email-link').href = 'mailto:' + emailAddress;
-                            </script>
-                        </a>
-                    </div>
-                </div>
-                
-                <div class="contact-item">
-                    <div class="contact-icon">💼</div>
-                    <div>
-                        <h3>LinkedIn</h3>
-                        <a href="https://linkedin.com/in/soonTM" target="_blank" rel="noopener noreferrer">linkedin.com/in/soonTM</a>
-                    </div>
-                </div>
-                
-                <div class="contact-item">
-                    <div class="contact-icon">🐙</div>
-                    <div>
-                        <h3>GitHub</h3>
-                        <a href="https://github.com/niugnepenguin" target="_blank" rel="noopener noreferrer">github.com/niugnepenguin</a>
-                    </div>
-                </div>
-            </div>
-        </section>
-    
-    <footer>
         <div class="container">
-            <p>© 2025 Penguin the Network Engineer | All Rights Reserved</p>
+            <ul>
+                <li><a href="#current">Current State</a></li>
+                <li><a href="#projects">Active Projects</a></li>
+                <li><a href="#lab">Lab Notes</a></li>
+                <li><a href="#philosophy">Philosophy</a></li>
+                <li><a href="#contact">Contact</a></li>
+                <li><a href="https://github.com/niugnepenguin" target="_blank">GitHub →</a></li>
+            </ul>
         </div>
-    </footer>
-</body>
-</html>
+    </nav>
+
+    <div class="container">
+        <section id="current" class="content-section" data-section="Current Status">
+            <h2>System Status</h2>
+            
+            <div class="status-grid">
+                <div class="status-card">
+                    <div class="status-label">Current Role</div>
+                    <div class="status-value">Systems Manager</div>
+                    <div class="status-detail"> 17 Sites • 9K+ Users</div>
+                </div>
+                
+                <div class="status-card">
+                    <div class="status-label">Home Infra Backbone</div>
+                    <div class="status-value">10G WAN+LAN, 120TB+ 3-2-1 df</div>
+                    <div class="status-detail">Across prod and dev</div>
+                </div>
+                
+                <div class="status-card learning">
+                    <div class="status-label">Currently Learning</div>
+                    <div class="status-value">Meshtastic / LoRa</div>
+                    <div class="status-detail">Community goals</div>
+                </div>
+                
+                <div class="status-card">
+                    <div class="status-label">Deployment Efficiency</div>
+                    <div class="status-value">↑ to the moon%</div>
+                    <div class="status-detail">Via automation & IaC</div>
+                </div>
+                
+                <div class="status-card planned">
+                    <div class="status-label">Next Project</div>
+                    <div class="status-value">Local LLM Agent Integrations</div>
+                    <div class="status-detail">LoRa, home automation, stuff</div>
+                </div>
+                
+                <div class="status-card">
+                    <div class="status-label">Homelab Nodes</div>
+                    <div class="status-value">8+ server cluster</div>
+                    <div class="status-detail">Proxmox + Talos (Kube)</div>
+                </div>
+            </div>
+
+            <div class="philosophy-block">
+                <h3>// Current Focus Areas</h3>
+                <p>Deepening expertise in <code>GitOps workflows</code>, exploring <code>service mesh architectures</code>, and building more resilient <code>disaster recovery</code> patterns. Always asking "why" before implementing "how".</p>
+            </div>
+        </section>
+
+        <section id="projects" class="content-section" data-section="Active Projects">
+            <h2>Infrastructure Projects</h2>
+            
+            <div class="project-log">
+                <div class="project-header">
+                    <h3 class="project-title">Enterprise Network Transformation</h3>
+                    <div class="project-meta">
+                        <span class="meta-tag active">PRODUCTION</span>
+                        <span class="meta-tag">2024</span>
+                    </div>
+                </div>
+                <p class="project-description">
+                    Orchestrated complete ISP migration and network redesign across 17 sites, transitioning from /24 to /28 IP addressing scheme while maintaining zero downtime during business hours. This wasn't just a migration - it was a complete reimagining of our network topology.
+                </p>
+                <div class="project-details">
+                    <div class="detail-block">
+                        <div class="detail-label">Impact</div>
+                        <div class="detail-value">Zero downtime migration</div>
+                    </div>
+                    <div class="detail-block">
+                        <div class="detail-label">Scale</div>
+                        <div class="detail-value">17 interconnected sites</div>
+                    </div>
+                    <div class="detail-block">
+                        <div class="detail-label">Efficiency Gain</div>
+                        <div class="detail-value">75% IP space optimization</div>
+                    </div>
+                </div>
+                <div class="tech-stack">
+                    <span class="tech-badge">Cisco</span>
+                    <span class="tech-badge">Meraki</span>
+                    <span class="tech-badge">Python</span>
+                    <span class="tech-badge">Ansible</span>
+                    <span class="tech-badge">VLAN Segmentation</span>
+                </div>
+            </div>
+
+            <div class="project-log">
+                <div class="project-header">
+                    <h3 class="project-title">Infrastructure as Code Implementation</h3>
+                    <div class="project-meta">
+                        <span class="meta-tag active">PRODUCTION</span>
+                        <span class="meta-tag wip">EXPANDING</span>
+                    </div>
+                </div>
+                <p class="project-description">
+                    Reduced deployment time for network/server policies by 90% through Ansible automation and CI/CD principles. What used to take hours of manual configuration now happens in minutes with full rollback capabilities.
+                </p>
+                <div class="project-details">
+                    <div class="detail-block">
+                        <div class="detail-label">Deployment Time</div>
+                        <div class="detail-value">-90% reduction</div>
+                    </div>
+                    <div class="detail-block">
+                        <div class="detail-label">Config Drift</div>
+                        <div class="detail-value">Eliminated</div>
+                    </div>
+                    <div class="detail-block">
+                        <div class="detail-label">Next Phase</div>
+                        <div class="detail-value">Terraform integration</div>
+                    </div>
+                </div>
+                <div class="tech-stack">
+                    <span class="tech-badge">Ansible</span>
+                    <span class="tech-badge">Git</span>
+                    <span class="tech-badge">CI/CD</span>
+                    <span class="tech-badge">YAML</span>
+                    <span class="tech-badge">Terraform</span>
+                </div>
+            </div>
+
+            <div class="project-log">
+                <div class="project-header">
+                    <h3 class="project-title">Homelab Kubernetes Cluster</h3>
+                    <div class="project-meta">
+                        <span class="meta-tag active">HOMELAB</span>
+                        <span class="meta-tag wip">ALWAYS EVOLVING</span>
+                    </div>
+                </div>
+                <p class="project-description">
+                    3-node bare-metal Kubernetes cluster running Talos Linux with GitOps workflows via ArgoCD. This is my playground for testing production patterns before deployment. Currently hosting 20+ services including Immich, n8n automation, and local LLM inference.
+                </p>
+                <div class="project-details">
+                    <div class="detail-block">
+                        <div class="detail-label">Nodes</div>
+                        <div class="detail-value">3x Proxmox VMs</div>
+                    </div>
+                    <div class="detail-block">
+                        <div class="detail-label">Storage</div>
+                        <div class="detail-value">120TB NAS (RAID5)</div>
+                    </div>
+                    <div class="detail-block">
+                        <div class="detail-label">Services</div>
+                        <div class="detail-value">20+ containerized apps</div>
+                    </div>
+                </div>
+                <div class="tech-stack">
+                    <span class="tech-badge">Kubernetes</span>
+                    <span class="tech-badge">Talos Linux</span>
+                    <span class="tech-badge">ArgoCD</span>
+                    <span class="tech-badge">Traefik</span>
+                    <span class="tech-badge">MetalLB</span>
+                    <span class="tech-badge">Authentik</span>
+                </div>
+            </div>
+        </section>
+
+        <section id="lab" class="content-section" data-section="Lab Notes">
+            <h2>Recent Experiments & Thoughts</h2>
+            
+            <div class="lab-note">
+                <div class="note-date">2025.01.15</div>
+                <h3 class="note-title">GitOps: The Good, The Bad, The Git Revert</h3>
+                <div class="note-content">
+                    <p>Implemented ArgoCD across the homelab cluster. The good: declarative configs are magical when they work. The bad: when your git repo becomes source of truth, a bad commit means rapid automated failure. Learned to always test in dev namespace first. Always.</p>
+                    <p>Key takeaway: <code>git revert</code> is your friend, but proper branch protection is your best friend.</p>
+                </div>
+            </div>
+
+            <div class="lab-note">
+                <div class="note-date">2023.10.22</div>
+                <h3 class="note-title">Why Every Network Engineer Should Run a Homelab</h3>
+                <div class="note-content">
+                    <p>You can read all the documentation you want, but nothing beats breaking your own network at 2 AM. Currently running Proxmox, Talos, and enough VLANs to make my switch question its life choices. This week's lesson: MTU mismatches are sneaky.</p>
+                </div>
+            </div>
+
+            <div class="lab-note">
+                <div class="note-date">2024.09.30</div>
+                <h3 class="note-title">Local LLMs for Infrastructure Automation</h3>
+                <div class="note-content">
+                    <p>Deployed Ollama and Llama.cpp with local LLMs integrated into n8n workflows. Now have AI-assisted log analysis and automated incident summaries. CPU inference is painful, but privacy and data sovereignty make it worthwhile. Next step: GPU node.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="philosophy" class="content-section" data-section="Philosophy">
+            <h2>Infrastructure Philosophy</h2>
+            
+            <div class="philosophy-block">
+                <h3>// On Understanding Systems</h3>
+                <p>"Know the why before the how" isn't just a catchphrase and it has saved me countless hours of fixing the wrong problem. Every system has a story, every architecture decision has context. Take the time to understand both.</p>
+            </div>
+
+            <div class="philosophy-block">
+                <h3>// On Automation</h3>
+                <p>Automate everything you do more than twice, but understand what you're automating first. The best automation comes from deep understanding of manual processes. Also, always include a manual override. Future you will thank present you.</p>
+            </div>
+
+            <div class="philosophy-block">
+                <h3>// On Learning</h3>
+                <p>The homelab isn't just about playing with tech. Your homelab is about having a safe space to fail spectacularly. Every outage is a lesson, every recovery is growth. Document everything, especially the failures.</p>
+            </div>
+
+            <div class="philosophy-block">
+                <h3>// On Digital Rights</h3>
+                <p>Infrastructure should be transparent, repairable, and under your control. Whether it's the right to repair hardware or the ability to audit code, ownership means actual ownership. This extends to data sovereignty it is your data, your rules.</p>
+            </div>
+        </section>
+
+        <section id="contact" class="content-section" data-section="Contact">
+            <h2>Get In Touch</h2>
+            
+            <div class="contact-grid">
+                <div class="contact-method">
+                    <div class="contact-label">// Email (obfuscated for the bots)</div>
+                    <div class="contact-value">
+                        <span id="email-contact"></span>
+                        <script>
+                            // Email obfuscation that actually works
+                            (function() {
+                                const e1 = 'hello';
+                                const e2 = String.fromCharCode(64);
+                                const e3 = 'niugnep';
+                                const e4 = String.fromCharCode(46);
+                                const e5 = 'fyi';
+                                const email = e1 + e2 + e3 + e4 + e5;
+                                const link = document.createElement('a');
+                                link.href = 'mailto:' + email;
+                                link.textContent = email;
+                                document.getElementById('email-contact').appendChild(link);
+                            
