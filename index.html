@@ -447,6 +447,13 @@
             color: var(--accent-primary);
         }
 
+        .website-field {
+            position: absolute;
+            left: -9999px;
+            opacity: 0;
+            pointer-events: none;
+        }
+
         /* Lab notes / Blog style entries */
         .lab-note {
             background: var(--bg-light);
@@ -606,8 +613,9 @@
             <div class="status-grid">
                 <div class="status-card">
                     <div class="status-label">Current Role</div>
-                    <div class="status-value">Systems Manager</div>
-                    <div class="status-detail"> 17 Sites • 9K+ Users</div>
+                    <div class="status-value">Infrastructure Engineer</div>
+                    <div class="status-detail">250 users, 8 LEO</div>
+                    <div class="status-detail">ground game, new space</div>
                 </div>
                 
                 <div class="status-card">
@@ -619,7 +627,7 @@
                 <div class="status-card learning">
                     <div class="status-label">Currently Learning</div>
                     <div class="status-value">Meshtastic / LoRa</div>
-                    <div class="status-detail">Community goals</div>
+                    <div class="status-detail">3 conferences, workshops</div>
                 </div>
                 
                 <div class="status-card">
@@ -630,8 +638,8 @@
                 
                 <div class="status-card planned">
                     <div class="status-label">Next Project</div>
-                    <div class="status-value">Local LLM Agent Integrations</div>
-                    <div class="status-detail">LoRa, home automation, stuff</div>
+                    <div class="status-value">AI Agent Orchestration</div>
+                    <div class="status-detail">Autonomous infra with local LLMs</div>
                 </div>
                 
                 <div class="status-card">
@@ -778,7 +786,7 @@
                 <div class="note-date">2024.09.30</div>
                 <h3 class="note-title">Local LLMs for Infrastructure Automation</h3>
                 <div class="note-content">
-                    <p>Deployed Ollama and Llama.cpp with local LLMs integrated into n8n workflows. Now have AI-assisted log analysis and automated incident summaries. CPU inference is painful, but privacy and data sovereignty make it worthwhile. Next step: GPU node.</p>
+                    <p>Deployed Ollama and Llama.cpp with local LLMs integrated into n8n workflows. Now have AI-assisted log analysis and automated incident summaries. CPU inference is painful, but privacy and data sovereignty make it worthwhile. GPU node deployed. Running llama-swap with Qwen3 and Nemotron models.</p>
                 </div>
             </div>
         </section>
@@ -821,10 +829,24 @@
                                 const e2 = String.fromCharCode(64);
                                 const e3 = 'niugnep';
                                 const e4 = String.fromCharCode(46);
-                                const e5 = 'fyi';
+                                const e5 = 'dev';
                                 const email = e1 + e2 + e3 + e4 + e5;
                                 const link = document.createElement('a');
                                 link.href = 'mailto:' + email;
                                 link.textContent = email;
                                 document.getElementById('email-contact').appendChild(link);
+                            })();
                             
+
+                        </script>
+                    </div>
+                    <!-- Honeypot: hidden form field catches bots -->
+                    <form action="mailto:hello@niugnep.dev" method="GET" style="display:none;" aria-hidden="true">
+                        <input type="text" name="website" class="website-field" tabindex="-1" autocomplete="off" />
+                    </form>
+                </div>
+            </div>
+        </section>
+    </div>
+</body>
+</html>
