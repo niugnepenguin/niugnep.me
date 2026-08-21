@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="index, follow, noai, noimageai, max-snippet:-1, max-image-preview:large">
+    <meta name="tdm-reservation" content="1">
+    <title>About | niugnep.me</title>
+    <meta name="description" content="Infrastructure philosophy, documentation conventions, and what the lab is actually built out of.">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="niugnep.me">
+    <meta property="og:title" content="About | niugnep.me">
+    <meta property="og:description" content="Infrastructure philosophy, documentation conventions, and what the lab is actually built out of.">
+    <meta property="og:url" content="https://niugnep.me/about.html">
+    <meta name="twitter:card" content="summary">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2032%2032'%3E%3Crect%20width='32'%20height='32'%20rx='6'%20fill='%230a0e1a'/%3E%3Ctext%20x='16'%20y='23'%20font-family='monospace'%20font-size='18'%20fill='%2300ff88'%20text-anchor='middle'%3E%3E_%3C/text%3E%3C/svg%3E">
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <div class="matrix-bg"></div>
+
+    <header>
+        <div class="container">
+            <div class="terminal-header compact">
+                <div class="terminal-bar">
+                    <div class="terminal-dots">
+                        <span class="dot red"></span>
+                        <span class="dot yellow"></span>
+                        <span class="dot green"></span>
+                    </div>
+                    <div class="terminal-title">penguin@niugnep:~/about</div>
+                </div>
+                <div class="terminal-content">
+                    <div>
+                        <span class="prompt">$</span>
+                        <span class="command"> cat ~/about/README.md</span>
+                    </div>
+                    <div class="output">How I think about systems, how I write them down, and what the lab runs on<span class="blink">_</span></div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <nav>
+        <div class="container">
+            <ul>
+                <li><a href="/">~/</a></li>
+                <li><a href="/projects.html">cd projects</a></li>
+                <li><a href="/notes.html">cd notes</a></li>
+                <li><a href="/about.html" aria-current="page">cd about</a></li>
+                <li><a href="https://github.com/niugnepenguin" target="_blank" rel="noopener">gh →</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <section id="philosophy" class="content-section" data-section="Philosophy">
+            <h2>Infrastructure Philosophy</h2>
+
+            <div class="philosophy-block">
+                <h3>// On Understanding Systems</h3>
+                <p>"Know the why before the how" isn't just a catchphrase and it has saved me countless hours of fixing the wrong problem. Every system has a story, every architecture decision has context. Take the time to understand both.</p>
+            </div>
+
+            <div class="philosophy-block">
+                <h3>// On Automation</h3>
+                <p>Automate everything you do more than twice, but understand what you're automating first. The best automation comes from deep understanding of manual processes. Also, always include a manual override. Future you will thank present you.</p>
+            </div>
+
+            <div class="philosophy-block">
+                <h3>// On Learning</h3>
+                <p>The homelab isn't just about playing with tech. Your homelab is about having a safe space to fail spectacularly. Every outage is a lesson, every recovery is growth. Document everything, especially the failures.</p>
+            </div>
+
+            <div class="philosophy-block">
+                <h3>// On Digital Rights</h3>
+                <p>Infrastructure should be transparent, repairable, and under your control. Whether it's the right to repair hardware or the ability to audit code, ownership means actual ownership. This extends to data sovereignty it is your data, your rules.</p>
+            </div>
+        </section>
+
+        <section id="documentation" class="content-section" data-section="Documentation">
+            <h2>How I Write Things Down</h2>
+            <p class="section-intro">At review time, an undocumented contribution and a contribution that didn't happen look identical. Same goes at 3 AM when the person on call isn't you.</p>
+
+            <div class="philosophy-block">
+                <h3>// Record the command, not the number</h3>
+                <p>A runbook that says "there are 17 zones" is wrong the moment somebody adds one, and it is wrong silently, because the reader has no way to know. A runbook that says "run this to list the zones" stays correct. Volatile values don't belong in documentation; the way to obtain them does.</p>
+            </div>
+
+            <div class="philosophy-block">
+                <h3>// Mark every claim confirmed or unverified</h3>
+                <p>Half of what ends up in a runbook is observed and half is inferred, and once it's all in the same font the reader can't tell which is which. So each claim carries its status explicitly. An honest <code>UNVERIFIED</code> tells the next person where to start checking, and it stops my assumptions from calcifying into somebody else's facts.</p>
+            </div>
+
+            <div class="philosophy-block">
+                <h3>// Never transcribe a secret</h3>
+                <p>Documentation gets copied, synced, pasted into chat and handed to new starters. Nothing that would need rotating if it leaked goes in it. The doc records where a credential lives and how to retrieve it, never its value. No exceptions, because the exceptions are what you find in an old note two years later.</p>
+            </div>
+
+            <div class="philosophy-block">
+                <h3>// Cross-link by dependency, not by folder</h3>
+                <p>Folder structure describes how the author filed something. Dependency links describe what will break if you change it. During an incident only the second is useful, so runbooks link to what they depend on and what depends on them.</p>
+            </div>
+        </section>
+
+        <section id="uses" class="content-section" data-section="The Lab">
+            <h2>How the Lab Is Built</h2>
+            <p class="section-intro">Architecture, not an inventory. Specifics stay on the private side of the firewall.</p>
+
+            <div class="status-grid">
+                <div class="status-card">
+                    <div class="status-label">Bare Metal</div>
+                    <div class="status-value">7+ machines</div>
+                    <div class="status-detail">No rented compute anywhere in it</div>
+                </div>
+
+                <div class="status-card">
+                    <div class="status-label">Hypervisors</div>
+                    <div class="status-value">3x Proxmox hosts</div>
+                    <div class="status-detail">Carrying the VM estate</div>
+                </div>
+
+                <div class="status-card">
+                    <div class="status-label">Cluster</div>
+                    <div class="status-value">3x Talos nodes</div>
+                    <div class="status-detail">Bare metal, all three control plane</div>
+                </div>
+
+                <div class="status-card">
+                    <div class="status-label">Inference</div>
+                    <div class="status-value">Framework 395+</div>
+                    <div class="status-detail">128GB RAM</div>
+                </div>
+
+                <div class="status-card">
+                    <div class="status-label">Ingress</div>
+                    <div class="status-value">One VIP, host-routed</div>
+                    <div class="status-detail">Traefik and cert-manager, LAN-only</div>
+                </div>
+
+                <div class="status-card">
+                    <div class="status-label">Reconciliation</div>
+                    <div class="status-value">ArgoCD, auto-sync</div>
+                    <div class="status-detail">Prune and self-heal on, small bootstrap layer by hand</div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <footer>
+        <div class="container">
+            <div class="footer-links">
+                <a href="/">home</a>
+                <a href="/projects.html">projects</a>
+                <a href="/notes.html">notes</a>
+                <a href="/about.html">about</a>
+                <a href="https://github.com/niugnepenguin" target="_blank" rel="noopener">github</a>
+            </div>
+            <div>Hand-written HTML. No trackers, no cookies, no third-party requests.</div>
+        </div>
+    </footer>
+</body>
+</html>

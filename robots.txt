@@ -1,0 +1,69 @@
+# niugnep.me
+#
+# Search engines are welcome. AI training crawlers, content harvesters and
+# SEO/backlink scrapers are not. This file is advisory: it is honoured by
+# well-behaved crawlers and ignored by everything else.
+#
+# Machine-readable reservation of TDM rights is also declared per page via
+# <meta name="tdm-reservation" content="1"> and in /.well-known/tdmrep.json.
+
+# ---------------------------------------------------------------
+# AI / LLM training and retrieval crawlers
+# ---------------------------------------------------------------
+User-agent: GPTBot
+User-agent: ChatGPT-User
+User-agent: OAI-SearchBot
+User-agent: ClaudeBot
+User-agent: Claude-Web
+User-agent: Claude-SearchBot
+User-agent: anthropic-ai
+User-agent: Google-Extended
+User-agent: GoogleOther
+User-agent: Applebot-Extended
+User-agent: Meta-ExternalAgent
+User-agent: Meta-ExternalFetcher
+User-agent: FacebookBot
+User-agent: PerplexityBot
+User-agent: Perplexity-User
+User-agent: CCBot
+User-agent: Bytespider
+User-agent: Amazonbot
+User-agent: cohere-ai
+User-agent: cohere-training-data-crawler
+User-agent: AI2Bot
+User-agent: Ai2Bot-Dolma
+User-agent: Diffbot
+User-agent: omgili
+User-agent: omgilibot
+User-agent: ImagesiftBot
+User-agent: Timpibot
+User-agent: YouBot
+User-agent: Kangaroo Bot
+User-agent: PanguBot
+User-agent: Webzio-Extended
+User-agent: Scrapy
+Disallow: /
+
+# ---------------------------------------------------------------
+# SEO / backlink / marketing-intelligence harvesters
+# ---------------------------------------------------------------
+User-agent: AhrefsBot
+User-agent: SemrushBot
+User-agent: MJ12bot
+User-agent: DotBot
+User-agent: DataForSeoBot
+User-agent: BLEXBot
+User-agent: rogerbot
+User-agent: magpie-crawler
+User-agent: serpstatbot
+User-agent: PetalBot
+Disallow: /
+
+# ---------------------------------------------------------------
+# Everyone else, including Googlebot and Bingbot
+# ---------------------------------------------------------------
+User-agent: *
+Disallow: /.well-known/
+Allow: /
+
+Sitemap: https://niugnep.me/sitemap.xml

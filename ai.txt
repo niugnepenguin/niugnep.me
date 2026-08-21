@@ -1,0 +1,14 @@
+# Spawning ai.txt - https://site.spawning.ai/spawning-ai-txt
+# Text and data mining rights are reserved for this domain.
+# No content on niugnep.me is licensed for use as AI training data.
+
+User-Agent: *
+Disallow: /
+Disallow: *.html
+Disallow: *.css
+Disallow: *.png
+Disallow: *.jpg
+Disallow: *.jpeg
+Disallow: *.gif
+Disallow: *.svg
+Disallow: *.webp

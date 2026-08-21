@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="index, follow, noai, noimageai, max-snippet:-1, max-image-preview:large">
+    <meta name="tdm-reservation" content="1">
+    <title>Projects | niugnep.me</title>
+    <meta name="description" content="Full project archive: networking, identity, Kubernetes, inference, and automation. Including the ones that got retired on purpose.">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="niugnep.me">
+    <meta property="og:title" content="Projects | niugnep.me">
+    <meta property="og:description" content="Full project archive: networking, identity, Kubernetes, inference, and automation.">
+    <meta property="og:url" content="https://niugnep.me/projects.html">
+    <meta name="twitter:card" content="summary">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2032%2032'%3E%3Crect%20width='32'%20height='32'%20rx='6'%20fill='%230a0e1a'/%3E%3Ctext%20x='16'%20y='23'%20font-family='monospace'%20font-size='18'%20fill='%2300ff88'%20text-anchor='middle'%3E%3E_%3C/text%3E%3C/svg%3E">
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <div class="matrix-bg"></div>
+
+    <header>
+        <div class="container">
+            <div class="terminal-header compact">
+                <div class="terminal-bar">
+                    <div class="terminal-dots">
+                        <span class="dot red"></span>
+                        <span class="dot yellow"></span>
+                        <span class="dot green"></span>
+                    </div>
+                    <div class="terminal-title">penguin@niugnep:~/projects</div>
+                </div>
+                <div class="terminal-content">
+                    <div>
+                        <span class="prompt">$</span>
+                        <span class="command"> ls -la ~/projects</span>
+                    </div>
+                    <div class="output">13 entries: networking, identity, kubernetes, inference, automation<span class="blink">_</span></div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <nav>
+        <div class="container">
+            <ul>
+                <li><a href="/">~/</a></li>
+                <li><a href="/projects.html" aria-current="page">cd projects</a></li>
+                <li><a href="/notes.html">cd notes</a></li>
+                <li><a href="/about.html">cd about</a></li>
+                <li><a href="https://github.com/niugnepenguin" target="_blank" rel="noopener">gh →</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <section class="content-section" data-section="Archive">
+            <h2>Project Archive</h2>
+            <p class="section-intro">Everything, grouped by domain. Each entry opens into the parts that were hard: failure modes, trade-offs, and the things I got wrong.</p>
+
+            <div class="tag-filter" id="tag-filter">
+                <span class="tag-filter-label">filter:</span>
+                <button type="button" data-tag="all" aria-pressed="true">all</button>
+                <button type="button" data-tag="PRODUCTION" aria-pressed="false">production</button>
+                <button type="button" data-tag="HOMELAB" aria-pressed="false">homelab</button>
+                <button type="button" data-tag="RETIRED" aria-pressed="false">retired</button>
+                <button type="button" data-tag="COMMUNITY" aria-pressed="false">community</button>
+            </div>
+        </section>
+
+        <!-- ================= NETWORKING ================= -->
+        <section class="content-section project-group" data-section="Networking">
+            <h2>Networking</h2>
+
+            <div class="project-log" id="rf-survey" data-tags="PRODUCTION">
+                <div class="project-header">
+                    <h3 class="project-title">Wireless RF Re-engineering</h3>
+                    <div class="project-meta">
+                        <span class="meta-tag active">PRODUCTION</span>
+                        <span class="meta-tag">2026</span>
+                    </div>
+                </div>
+                <p class="project-description">
+                    A two-floor, 22-AP wireless estate where everything was slow and nobody could say why. I ran a formal RF survey first, which turned "the WiFi is bad" into numbers: 64 BSSIDs contending on one 2.4 GHz channel, transmit power high enough that cells bled through floors, and the whole DFS range sitting unused. Then I changed one class of variable at a time, each with a written user-impact assessment before the maintenance window.
+                </p>
+                <div class="project-details">
+                    <div class="detail-block">
+                        <div class="detail-label">Radio Contention</div>
+                        <div class="detail-value">44 → 22 on 2.4 GHz</div>
+                    </div>
+                    <div class="detail-block">
+                        <div class="detail-label">Added Capacity</div>
+                        <div class="detail-value">~12 DFS channels</div>
+                    </div>
+                    <div class="detail-block">
+                        <div class="detail-label">Reported Issues</div>
+                        <div class="detail-value">Zero since implementation</div>
+                    </div>
+                </div>
+                <div class="tech-stack">
+                    <span class="tech-badge">802.11ax</span>
+                    <span class="tech-badge">6 GHz</span>
+                    <span class="tech-badge">DFS</span>
+                    <span class="tech-badge">RF Survey</span>
+                    <span class="tech-badge">Spectrum Analysis</span>
+                </div>
+                <details class="project-deep">
+                    <summary>Survey findings and what changed</summary>
+                    <div class="deep-body">
+                        <p>Inter-floor attenuation measured between 2 and 41 dB depending on where you stood. The floors were not RF-isolated, but the power settings had been chosen as though they were, so floor one and floor two were competing for the same spectrum without anyone deciding they should.</p>
+                        <p>2.4 GHz gives you three non-overlapping channels. There were 44 radios to spread across them, and the spread was badly lopsided: 64 BSSIDs on one channel, nine on another. Every client on the crowded channel queued behind traffic it had no interest in.</p>
+                        <p>What changed:</p>
+                        <ul>
+                            <li>Per-SSID band selection, so networks could be placed on the bands that suited them instead of every SSID appearing on every radio.</li>
+                            <li>Flex radios reassigned to 6 GHz, halving the 2.4 GHz radio count from 44 to 22 and taking most of the contention with it.</li>
+                            <li>DFS enabled, opening roughly 12 additional 5 GHz channels the estate had never used.</li>
+                            <li>Transmit power cut from 28-30 dBm to 17-18 dBm, sizing cells against the measured attenuation.</li>
+                        </ul>
+                        <p>One caveat. "Zero reported issues" is a proxy, not a measurement. It is the outcome users experienced, but the numbers I wanted, channel utilisation and client retry rate before and after, were never captured. Next survey, those get baselined first.</p>
+                    </div>
+                </details>
+            </div>
+
+            <div class="project-log" id="ipsec-bgp" data-tags="PRODUCTION">
+                <div class="project-header">
+                    <h3 class="project-title">Multi-site IPsec / BGP WAN Migration</h3>
+                    <div class="project-meta">
+                        <span class="meta-tag active">PRODUCTION</span>
+                        <span class="meta-tag">2026</span>
+                    </div>
+                </div>
+                <p class="project-description">
+                    Moved two offices off software tunnels onto native IPsec/IKEv2 over a cloud WAN, and off static routing onto BGP. I designed and executed both cutovers. The routed estate they join is hybrid and spans four cloud environments, AWS commercial and government, Azure and GCP, alongside the physical sites. Dozens of individually-advertised subnets collapsed into a compact prefix set, which made the routing table readable again during an incident.
+                </p>
+                <div class="project-details">
+                    <div class="detail-block">
+                        <div class="detail-label">Routing</div>
+                        <div class="detail-value">Static → BGP dynamic</div>
+                    </div>
+                    <div class="detail-block">
+                        <div class="detail-label">Advertisements</div>
+                        <div class="detail-value">Dozens → compact prefix set</div>
+                    </div>
+                    <div class="detail-block">
+                        <div class="detail-label">Estate</div>
+                        <div class="detail-value">4 clouds + physical sites</div>
+                    </div>
+                </div>
+                <div class="tech-stack">
+                    <span class="tech-badge">IPsec</span>
+                    <span class="tech-badge">IKEv2</span>
+                    <span class="tech-badge">BGP</span>
+                    <span class="tech-badge">Cloud WAN</span>
+                    <span class="tech-badge">pfSense</span>
+                </div>
+                <details class="project-deep">
+                    <summary>The IPsec failure taxonomy</summary>
+                    <div class="deep-body">
+                        <p>Almost every tunnel problem I hit was one of three things. Writing them down as a checklist turned a day of guessing into twenty minutes of elimination.</p>
+                        <p><strong>MSS clamping.</strong> The tunnel comes up, ICMP works fine, then TCP hangs on anything with a real payload. Encapsulation overhead pushes packets past the path MTU, the don't-fragment bit does the rest, and the black hole looks like an application problem. Small packets always work, which is what makes it confusing.</p>
+                        <p><strong>NAT traversal.</strong> IKE begins negotiation on one port and relocates to another once NAT is detected. Anything stateful in the path that treats those as unrelated flows will tear down the association, intermittently.</p>
+                        <p><strong>Traffic-selector mismatch.</strong> Route-based and policy-based peers disagree about what a tunnel carries. One says "everything, let routing decide"; the other wants explicit subnet pairs. They negotiate happily and then pass no traffic at all.</p>
+                        <p>A tunnel reporting "up" tells you nearly nothing. Control plane and data plane fail independently, so the health check has to prove a packet made the trip, not that the peers are talking.</p>
+                    </div>
+                </details>
+            </div>
+
+            <div class="project-log" id="meshtastic" data-tags="COMMUNITY">
+                <div class="project-header">
+                    <h3 class="project-title">Meshtastic / LoRa Mesh Networking</h3>
+                    <div class="project-meta">
+                        <span class="meta-tag active">COMMUNITY</span>
+                        <span class="meta-tag">ONGOING</span>
+                    </div>
+                </div>
+                <p class="project-description">
+                    Off-grid mesh networking on cheap LoRa hardware. Encrypted, license-free, and independent of infrastructure I don't own. It started as a homelab curiosity and turned into teaching it, with hands-on workshops at BSides Portland in October 2025 and BSides Seattle in February 2026. Attendees build and configure a node from scratch and take the hardware home.
+                </p>
+                <div class="project-details">
+                    <div class="detail-block">
+                        <div class="detail-label">Format</div>
+                        <div class="detail-value">Hands-on workshops</div>
+                    </div>
+                    <div class="detail-block">
+                        <div class="detail-label">Venues</div>
+                        <div class="detail-value">BSides PDX '25, Seattle '26</div>
+                    </div>
+                    <div class="detail-block">
+                        <div class="detail-label">Scope</div>
+                        <div class="detail-value">Build, configure, deploy</div>
+                    </div>
+                </div>
+                <div class="tech-stack">
+                    <span class="tech-badge">Meshtastic</span>
+                    <span class="tech-badge">LoRa</span>
+                    <span class="tech-badge">RF</span>
+                    <span class="tech-badge">Mesh Routing</span>
+                    <span class="tech-badge">Off-grid Comms</span>
+                </div>
+                <details class="project-deep">
+                    <summary>What mesh radio teaches you about networking</summary>
+                    <div class="deep-body">
+                        <p>Routing, MTU, retransmission and congestion control are all still there. What changes is that propagation, duty cycle and battery budget become constraints you cannot delegate, and the physical layer stops being something you assume works. After years of treating the cable as solved, that is a useful correction.</p>
+                        <p>Explaining the spreading-factor and airtime trade-off to a room whose experience runs from zero to comfortable forces you to understand it rather than recite it. Every workshop so far has produced at least one question I could not answer cleanly on the spot.</p>
+                    </div>
+                </details>
+            </div>
+
+            <div class="project-log" id="net-transform" data-tags="PRODUCTION">
+                <div class="project-header">
+                    <h3 class="project-title">Enterprise Network Transformation</h3>
+                    <div class="project-meta">
+                        <span class="meta-tag active">PRODUCTION</span>
+                        <span class="meta-tag">2024</span>
+                    </div>
+                </div>
+                <p class="project-description">
+                    Orchestrated complete ISP migration and network redesign across 17 sites, transitioning from /24 to /28 IP addressing scheme while maintaining zero downtime during business hours. This wasn't just a migration - it was a complete reimagining of our network topology.
+                </p>
+                <div class="project-details">
+                    <div class="detail-block">
+                        <div class="detail-label">Impact</div>
+                        <div class="detail-value">Zero downtime migration</div>
+                    </div>
+                    <div class="detail-block">
+                        <div class="detail-label">Scale</div>
+                        <div class="detail-value">17 interconnected sites</div>
+                    </div>
+                    <div class="detail-block">
+                        <div class="detail-label">Efficiency Gain</div>
+                        <div class="detail-value">75% IP space optimization</div>
+                    </div>
+                </div>
+                <div class="tech-stack">
+                    <span class="tech-badge">Cisco</span>
+                    <span class="tech-badge">Meraki</span>
+                    <span class="tech-badge">Python</span>
+                    <span class="tech-badge">Ansible</span>
+                    <span class="tech-badge">VLAN Segmentation</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= IDENTITY ================= -->
+        <section class="content-section project-group" data-section="Identity &amp; Directory">
+            <h2>Identity &amp; Directory</h2>
+
+            <div class="project-log" id="dot1x" data-tags="PRODUCTION">
+                <div class="project-header">
+                    <h3 class="project-title">Identity-backed 802.1X Access Control</h3>
+                    <div class="project-meta">
+                        <span class="meta-tag active">PRODUCTION</span>
+                        <span class="meta-tag">2026</span>
+                    </div>
+                </div>
+                <p class="project-description">
+                    Replaced directory-backed wireless authentication with FreeRADIUS running against an identity provider's LDAP interface, so network access follows the same identity source as everything else. Different platforms negotiate differently, so the server offers a path per platform and macOS, Windows and Linux all enroll without anyone being walked through a dialog. Authorization is scoped by group membership in the identity provider, not by which network you connected to.
+                </p>
+                <div class="project-details">
+                    <div class="detail-block">
+                        <div class="detail-label">Auth Source</div>
+                        <div class="detail-value">Single identity provider</div>
+                    </div>
+                    <div class="detail-block">
+                        <div class="detail-label">Enrollment</div>
+                        <div class="detail-value">Zero-touch, 3 platforms</div>
+                    </div>
+                    <div class="detail-block">
+                        <div class="detail-label">Authorization</div>
+                        <div class="detail-value">Group-scoped per network</div>
+                    </div>
+                </div>
+                <div class="tech-stack">
+                    <span class="tech-badge">FreeRADIUS</span>
+                    <span class="tech-badge">802.1X</span>
+                    <span class="tech-badge">EAP</span>
+                    <span class="tech-badge">LDAP</span>
+                    <span class="tech-badge">MDM Profiles</span>
+                </div>
+                <details class="project-deep">
+                    <summary>The silent authentication outage</summary>
+                    <div class="deep-body">
+                        <p>The service would start cleanly, authenticate correctly for a few minutes, then stop. No crash, no error in the log, the process still running and still listening. It just stopped answering.</p>
+                        <p>The cause was untuned LDAP connection pooling. Pooled connections sat idle past the directory's timeout and died, and because nothing tested a connection before handing it out, the server kept issuing dead handles to live requests. Authentication attempts went in and nothing came back.</p>
+                        <p>Tuning the pool fixed it: connection reuse limits, lifetime, idle timeout, keepalive. The tuned values went into documentation as the baseline instead of surviving as folklore in one person's head.</p>
+                        <p>A pooled connection is a cache, and every cache needs an explicit invalidation story. If you cannot say when an entry goes stale and what checks it before use, you have a silent-failure generator with good throughput numbers.</p>
+                    </div>
+                </details>
+            </div>
+
+            <div class="project-log" id="dns-cluster" data-tags="PRODUCTION">
+                <div class="project-header">
+                    <h3 class="project-title">Clustered Internal DNS Platform</h3>
+                    <div class="project-meta">
+                        <span class="meta-tag active">PRODUCTION</span>
+                        <span class="meta-tag">2026</span>
+                    </div>
+                </div>
+                <p class="project-description">
+                    Two-node internal DNS with primary/secondary replication over HTTPS using catalog zones, so creating a zone on the primary propagates on its own instead of becoming a second task somebody forgets. Split-horizon resolution for internal names, with DHCP moved onto the same platform. I wrote the migration runbook and the operational runbook alongside it, so somebody else can run it.
+                </p>
+                <div class="project-details">
+                    <div class="detail-block">
+                        <div class="detail-label">Topology</div>
+                        <div class="detail-value">2-node primary/secondary</div>
+                    </div>
+                    <div class="detail-block">
+                        <div class="detail-label">Replication</div>
+                        <div class="detail-value">Catalog zone, automatic</div>
+                    </div>
+                    <div class="detail-block">
+                        <div class="detail-label">TLS Renewal</div>
+                        <div class="detail-value">Fully unattended</div>
+                    </div>
+                </div>
+                <div class="tech-stack">
+                    <span class="tech-badge">DNS</span>
+                    <span class="tech-badge">Split-horizon</span>
+                    <span class="tech-badge">DHCP</span>
+                    <span class="tech-badge">Let's Encrypt</span>
+                    <span class="tech-badge">ACME DNS-01</span>
+                </div>
+                <details class="project-deep">
+                    <summary>Automating the certificate lifecycle properly</summary>
+                    <div class="deep-body">
+                        <p>Certificate renewal is where self-hosted services quietly rot. Someone renews by hand for a year, then changes team, and the service goes down on a Sunday ninety days later.</p>
+                        <p>This one has no manual step anywhere in the chain: a DNS-01 challenge issues the certificate through the DNS provider's API, a deploy hook converts the result into the container format the service actually consumes, and the service reloads itself. Renewal is a scheduled job that nobody needs to remember, and the runbook records the command that proves it worked, not the expiry date it produced.</p>
+                        <p>The conversion step is easy to skip. Plenty of services cannot read what your ACME client writes, so renewal succeeds, the client reports success, and the certificate lands in a format the service ignores. It keeps serving the old one until it expires. "The cron job ran" and "the service is presenting a valid certificate" are different claims, and only the second is worth monitoring.</p>
+                    </div>
+                </details>
+            </div>
+        </section>
+
+        <!-- ================= KUBERNETES ================= -->
+        <section class="content-section project-group" data-section="Kubernetes &amp; GitOps">
+            <h2>Kubernetes &amp; GitOps</h2>
+
+            <div class="project-log" id="talos-gitops" data-tags="HOMELAB">
+                <div class="project-header">
+                    <h3 class="project-title">Talos + ArgoCD GitOps Platform</h3>
+                    <div class="project-meta">
+                        <span class="meta-tag active">HOMELAB</span>
+                        <span class="meta-tag wip">ALWAYS EVOLVING</span>
+                    </div>
+                </div>
+                <p class="project-description">
+                    Three-node bare-metal Kubernetes on Talos Linux, an immutable API-managed OS with no shell to SSH into, which forces every change to be declarative whether you feel like it or not. All three nodes are control planes. Traefik handles ingress, cert-manager issues certificates, MetalLB provides the load-balancer address, and ArgoCD reconciles the lot from git with auto-sync, prune and self-heal on, so drift gets corrected instead of accumulating.
+                </p>
+                <div class="project-details">
+                    <div class="detail-block">
+                        <div class="detail-label">Nodes</div>
+                        <div class="detail-value">3x bare-metal, all control plane</div>
+                    </div>
+                    <div class="detail-block">
+                        <div class="detail-label">Reconciliation</div>
+                        <div class="detail-value">Auto-sync, prune, self-heal</div>
+                    </div>
+                    <div class="detail-block">
+                        <div class="detail-label">Ingress</div>
+                        <div class="detail-value">Single VIP, host-routed</div>
+                    </div>
+                </div>
+                <div class="tech-stack">
+                    <span class="tech-badge">Talos Linux</span>
+                    <span class="tech-badge">Kubernetes</span>
+                    <span class="tech-badge">ArgoCD</span>
+                    <span class="tech-badge">Traefik</span>
+                    <span class="tech-badge">cert-manager</span>
+                    <span class="tech-badge">MetalLB</span>
+                    <span class="tech-badge">Helm</span>
+                </div>
+                <details class="project-deep">
+                    <summary>Four things that cost me real time</summary>
+                    <div class="deep-body">
+                        <p>A manifest carried a singular field name where the schema wanted the plural. Kubernetes accepted the object, discarded the field it did not recognise, and reported success. The config looked applied and did nothing for months, until something downstream made the absence visible. Strict schema validation catches this, because it rejects unknown fields instead of ignoring them.</p>
+                        <p>A dangling reference to a deleted middleware took a host offline. Schema validation would not have caught it, since every file was individually valid and the problem only existed between them. There is now a small custom validator that resolves cross-resource references before anything merges, running in pre-commit alongside the linter and the schema check. Pre-commit is the enforcement point; CI runs the same checks advisory-only.</p>
+                        <p>MetalLB excludes control-plane nodes from load-balancer eligibility by default. Sensible, right up until every node you own is a control plane and nothing can be assigned an address. The override is one flag. Working out that you need it took considerably longer.</p>
+                        <p>Moving across several minor versions meant every component with an opinion about the API surface had to move too. I mapped the dependency ladder first, working out which ingress, certificate and GitOps controller versions were mutually compatible and compatible with the target. That turned a multi-day sprawl of discovering incompatibilities one at a time into a single planned window.</p>
+                    </div>
+                </details>
+            </div>
+
+            <div class="project-log" id="iac" data-tags="PRODUCTION">
+                <div class="project-header">
+                    <h3 class="project-title">Infrastructure as Code</h3>
+                    <div class="project-meta">
+                        <span class="meta-tag active">PRODUCTION</span>
+                        <span class="meta-tag wip">EXPANDING</span>
+                    </div>
+                </div>
+                <p class="project-description">
+                    Reduced deployment time for network/server policies by 90% through Ansible automation and CI/CD principles. What used to take hours of manual configuration now happens in minutes with full rollback capabilities.
+                </p>
+                <div class="project-details">
+                    <div class="detail-block">
+                        <div class="detail-label">Deployment Time</div>
+                        <div class="detail-value">-90% reduction</div>
+                    </div>
+                    <div class="detail-block">
+                        <div class="detail-label">Config Drift</div>
+                        <div class="detail-value">Eliminated</div>
+                    </div>
+                    <div class="detail-block">
+                        <div class="detail-label">Next Phase</div>
+                        <div class="detail-value">Terraform integration</div>
+                    </div>
+                </div>
+                <div class="tech-stack">
+                    <span class="tech-badge">Ansible</span>
+                    <span class="tech-badge">Git</span>
+                    <span class="tech-badge">CI/CD</span>
+                    <span class="tech-badge">YAML</span>
+                    <span class="tech-badge">Terraform</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= AI ================= -->
+        <section class="content-section project-group" data-section="AI &amp; Inference">
+            <h2>AI &amp; Inference</h2>
+
+            <div class="project-log" id="llm-host" data-tags="HOMELAB">
+                <div class="project-header">
+                    <h3 class="project-title">LLM Inference Host</h3>
+                    <div class="project-meta">
+                        <span class="meta-tag active">HOMELAB</span>
+                        <span class="meta-tag">2026</span>
+                    </div>
+                </div>
+                <p class="project-description">
+                    A Framework 395+ with 128GB of RAM, so model size stops being bounded by whatever discrete VRAM you could afford. It runs a nine-model roster behind an OpenAI-compatible proxy that starts and stops backends on demand, so idle models cost nothing and one endpoint serves coding, general chat and the voice assistant.
+                </p>
+                <div class="project-details">
+                    <div class="detail-block">
+                        <div class="detail-label">Platform</div>
+                        <div class="detail-value">Framework 395+, 128GB</div>
+                    </div>
+                    <div class="detail-block">
+                        <div class="detail-label">Roster</div>
+                        <div class="detail-value">9 models, on-demand</div>
+                    </div>
+                    <div class="detail-block">
+                        <div class="detail-label">Runtime</div>
+                        <div class="detail-value">Rootless containers</div>
+                    </div>
+                </div>
+                <div class="tech-stack">
+                    <span class="tech-badge">llama.cpp</span>
+                    <span class="tech-badge">llama-swap</span>
+                    <span class="tech-badge">podman</span>
+                    <span class="tech-badge">Vulkan</span>
+                    <span class="tech-badge">systemd</span>
+                </div>
+                <details class="project-deep">
+                    <summary>Benchmarking, and giving the GPU back</summary>
+                    <div class="deep-body">
+                        <p>Prefill cost is not linear in context length. Pushing toward 33k tokens, time-to-first-token grows faster than the token count does, which makes context budget a latency decision as much as a memory one. I also measured prefix-cache behaviour, KV-cache footprint per model, and how the allocator hands out GPU-addressable memory, because the documented model and the observed behaviour did not agree.</p>
+                        <p>The box is also a gaming machine, and both jobs want the same silicon. A systemd unit watches for a game launching and swaps the public model IDs over to CPU-only twins, so anything calling the API keeps working at reduced speed instead of failing. When the game exits, it swaps back. Nothing on the client side has to know.</p>
+                        <p>There is a standing list of models evaluated and deferred, each with the reason and the condition that would justify revisiting. It costs a paragraph now and saves re-running the same evaluation in six months.</p>
+                    </div>
+                </details>
+            </div>
+
+            <div class="project-log" id="voice" data-tags="HOMELAB">
+                <div class="project-header">
+                    <h3 class="project-title">Local-first Voice Assistant</h3>
+                    <div class="project-meta">
+                        <span class="meta-tag active">HOMELAB</span>
+                        <span class="meta-tag">IN PROD</span>
+                    </div>
+                </div>
+                <p class="project-description">
+                    Replaced the commercial smart speaker with a pipeline that never leaves the building: wake word on the device, Whisper for speech-to-text, Qwen3.5-9b as the conversation agent, and Piper for speech synthesis, wired together in Home Assistant over Wyoming. Five nodes around the house run it. Satellites are ESPHome hardware doing on-device wake-word detection. The governing constraint is zero egress, and the only component allowed to reach the internet is an opt-in search tool.
+                </p>
+                <div class="project-details">
+                    <div class="detail-block">
+                        <div class="detail-label">Pipeline</div>
+                        <div class="detail-value">wake → STT → LLM → TTS</div>
+                    </div>
+                    <div class="detail-block">
+                        <div class="detail-label">Egress</div>
+                        <div class="detail-value">None by default</div>
+                    </div>
+                    <div class="detail-block">
+                        <div class="detail-label">Coverage</div>
+                        <div class="detail-value">5 nodes around the house</div>
+                    </div>
+                </div>
+                <div class="tech-stack">
+                    <span class="tech-badge">Home Assistant</span>
+                    <span class="tech-badge">Wyoming</span>
+                    <span class="tech-badge">Whisper</span>
+                    <span class="tech-badge">Qwen3.5-9b</span>
+                    <span class="tech-badge">Piper</span>
+                    <span class="tech-badge">ESPHome</span>
+                    <span class="tech-badge">microWakeWord</span>
+                </div>
+                <details class="project-deep">
+                    <summary>Where the docs were wrong, and what is still broken</summary>
+                    <div class="deep-body">
+                        <p>I had assumed that preferring local intent handling meant the model only ever saw requests the built-in matcher could not resolve. The documentation reads that way. The implementation does not: the filter deciding which intents qualify is much narrower than its name suggests, and far more was reaching the model than I had designed for. Reading the pipeline code corrected the design. Re-reading the documentation would not have, because it was silent rather than wrong.</p>
+                        <p>Tool-call reliability is still the rough edge. A small local model asked to hold a natural conversation and emit well-formed tool calls will do one of those well at a time, so choosing the model was mostly choosing which failure I could live with. It runs in production regardless, because an assistant that occasionally fumbles a tool call still beats one that ships every utterance in the house to somebody else. The runbook has not caught up with the deployment yet.</p>
+                    </div>
+                </details>
+            </div>
+
+            <div class="project-log" id="ds4" data-tags="HOMELAB RETIRED">
+                <div class="project-header">
+                    <h3 class="project-title">On-demand Large-Model PoC</h3>
+                    <div class="project-meta">
+                        <span class="meta-tag retired">RETIRED</span>
+                        <span class="meta-tag">2026</span>
+                    </div>
+                </div>
+                <p class="project-description">
+                    A proof of concept for serving an 80GB model on hardware that could not afford to keep it resident. systemd socket activation held the port open, the first connection triggered a container start and model load, cold start cost about 25 seconds, and a watchdog fell back to a smaller CPU-hosted model whenever the GPU was wanted elsewhere. It worked as designed. The throughput numbers retired it.
+                </p>
+                <div class="project-details">
+                    <div class="detail-block">
+                        <div class="detail-label">Cold Start</div>
+                        <div class="detail-value">~25s, socket-activated</div>
+                    </div>
+                    <div class="detail-block">
+                        <div class="detail-label">Throughput</div>
+                        <div class="detail-value">15.8 tok/s</div>
+                    </div>
+                    <div class="detail-block">
+                        <div class="detail-label">Verdict</div>
+                        <div class="detail-value">Retired on evidence</div>
+                    </div>
+                </div>
+                <div class="tech-stack">
+                    <span class="tech-badge">systemd</span>
+                    <span class="tech-badge">Socket Activation</span>
+                    <span class="tech-badge">Quadlet</span>
+                    <span class="tech-badge">ROCm</span>
+                    <span class="tech-badge">podman</span>
+                </div>
+                <details class="project-deep">
+                    <summary>What the numbers said</summary>
+                    <div class="deep-body">
+                        <p>Holding roughly 106 GiB of memory to produce 15.8 tokens per second is a bad trade when the same hardware runs a smaller model several times faster with capacity left over. Once that number existed, the decision made itself.</p>
+                        <p>So I retired it deliberately instead of leaving it running. The runbook moved into an archive directory with a note recording what it did, what it measured, why it was shut down, and what would have to change for it to be worth revisiting.</p>
+                        <p>A PoC that is quietly abandoned teaches nobody anything. Six months later someone proposes it again from first principles, usually me, and pays the same cost to reach the same conclusion.</p>
+                    </div>
+                </details>
+            </div>
+        </section>
+
+        <!-- ================= AUTOMATION ================= -->
+        <section class="content-section project-group" data-section="Automation &amp; Tooling">
+            <h2>Automation &amp; Tooling</h2>
+
+            <div class="project-log" id="offboarding" data-tags="PRODUCTION">
+                <div class="project-header">
+                    <h3 class="project-title">Offboarding Automation Pipeline</h3>
+                    <div class="project-meta">
+                        <span class="meta-tag active">PRODUCTION</span>
+                        <span class="meta-tag">2026</span>
+                    </div>
+                </div>
+                <p class="project-description">
+                    A scheduled job that reconciles termination data from the HR system against the identity estate, archives the departing account, and files a ticket carrying the full downstream deprovisioning checklist, so nothing depends on somebody remembering the list at four on a Friday afternoon. A separate deferred stage handles mail-forwarding expiry. First production run completed with zero errors.
+                </p>
+                <div class="project-details">
+                    <div class="detail-block">
+                        <div class="detail-label">Trigger</div>
+                        <div class="detail-value">Scheduled, HRIS-reconciled</div>
+                    </div>
+                    <div class="detail-block">
+                        <div class="detail-label">First Run Errors</div>
+                        <div class="detail-value">Zero</div>
+                    </div>
+                    <div class="detail-block">
+                        <div class="detail-label">Manual Checklist</div>
+                        <div class="detail-value">Eliminated</div>
+                    </div>
+                </div>
+                <div class="tech-stack">
+                    <span class="tech-badge">Bash</span>
+                    <span class="tech-badge">REST APIs</span>
+                    <span class="tech-badge">jq</span>
+                    <span class="tech-badge">cron</span>
+                    <span class="tech-badge">Ticketing API</span>
+                </div>
+                <details class="project-deep">
+                    <summary>Two design decisions worth the argument</summary>
+                    <div class="deep-body">
+                        <p>The obvious design pipes HR data through a spreadsheet that somebody maintains. That makes a human the integrity guarantee, and humans go on holiday. Reading directly from the HR system with a read-only key removes the intermediary, so the automation and the source of truth agree by construction. The failure mode changes from "the sheet is stale", which is silent and can persist for months, to "the API is unreachable", which is loud and gets fixed today.</p>
+                        <p>Mail forwarding expires long after the account is archived. Filing that cleanup ticket immediately means it sits open in the queue for two months, poisoning every ticket-age and time-to-resolution figure the team reports. So the job keeps its own queue and files the ticket when it becomes actionable. Automation that corrupts your metrics costs you something even when the work it performs is correct, because the numbers are how the team gets resourced.</p>
+                    </div>
+                </details>
+            </div>
+
+            <div class="project-log" id="forecaster" data-tags="PRODUCTION">
+                <div class="project-header">
+                    <h3 class="project-title">License Capacity Forecaster</h3>
+                    <div class="project-meta">
+                        <span class="meta-tag active">PRODUCTION</span>
+                        <span class="meta-tag">2026</span>
+                    </div>
+                </div>
+                <p class="project-description">
+                    A weekly job that answers "will we run out of seats before the next group of hires starts" while the answer can still be acted on. It counts live usage instead of trusting the vendor's reporting API, subtracts incoming hires who already hold a seat, and requests only the difference. Its first live cycle cut the request by roughly three quarters, because most of the seats were already owned.
+                </p>
+                <div class="project-details">
+                    <div class="detail-block">
+                        <div class="detail-label">Request Accuracy</div>
+                        <div class="detail-value">~75% reduction</div>
+                    </div>
+                    <div class="detail-block">
+                        <div class="detail-label">Data Handling</div>
+                        <div class="detail-value">Aggregates only</div>
+                    </div>
+                    <div class="detail-block">
+                        <div class="detail-label">Failure Mode</div>
+                        <div class="detail-value">Fail-closed</div>
+                    </div>
+                </div>
+                <div class="tech-stack">
+                    <span class="tech-badge">Bash</span>
+                    <span class="tech-badge">jq</span>
+                    <span class="tech-badge">REST APIs</span>
+                    <span class="tech-badge">HRIS Integration</span>
+                    <span class="tech-badge">Capacity Modelling</span>
+                </div>
+                <details class="project-deep">
+                    <summary>Safety properties</summary>
+                    <div class="deep-body">
+                        <p>The vendor's usage report lags reality by enough to matter. Enumerating accounts live costs more API calls and returns a true number. The gap between the two was wide enough to have caused a wrong purchase.</p>
+                        <p>Filtering out terminated hires sounds correct until you find that a rescinded offer flips to terminated while keeping its future start date, so a deny-list passes it through and forecasts a seat for somebody who is never arriving. Allow-listing the two statuses that mean "starting" is the same amount of code without that hole.</p>
+                        <p>Zero employees back from the HR system means a broken query. The job exits non-zero instead of forecasting against nothing. Every implausible input needs a defined refusal.</p>
+                        <p>All per-person reduction happens inside the query layer, so no individual's data reaches a shell variable, a log line, or a ticket body. The output is a count, which is all anything downstream needs.</p>
+                    </div>
+                </details>
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <div class="container">
+            <div class="footer-links">
+                <a href="/">home</a>
+                <a href="/projects.html">projects</a>
+                <a href="/notes.html">notes</a>
+                <a href="/about.html">about</a>
+                <a href="https://github.com/niugnepenguin" target="_blank" rel="noopener">github</a>
+            </div>
+            <div>Hand-written HTML. No trackers, no cookies, no third-party requests.</div>
+        </div>
+    </footer>
+
+    <script>
+        (function() {
+            const bar = document.getElementById('tag-filter');
+            if (!bar) return;
+            const buttons = Array.from(bar.querySelectorAll('button[data-tag]'));
+            const projects = Array.from(document.querySelectorAll('.project-log[data-tags]'));
+            const groups = Array.from(document.querySelectorAll('.project-group'));
+
+            function apply(tag) {
+                projects.forEach(function(project) {
+                    const tags = (project.dataset.tags || '').split(/\s+/);
+                    project.hidden = !(tag === 'all' || tags.indexOf(tag) !== -1);
+                });
+                groups.forEach(function(group) {
+                    const items = group.querySelectorAll('.project-log[data-tags]');
+                    if (!items.length) return;
+                    group.hidden = !Array.from(items).some(function(item) { return !item.hidden; });
+                });
+                buttons.forEach(function(button) {
+                    button.setAttribute('aria-pressed', String(button.dataset.tag === tag));
+                });
+            }
+
+            buttons.forEach(function(button) {
+                button.addEventListener('click', function() { apply(button.dataset.tag); });
+            });
+
+            // Deep-link support: never let a filter hide the anchor target.
+            if (window.location.hash) {
+                const target = document.querySelector(window.location.hash);
+                if (target && target.classList.contains('project-log')) {
+                    const details = target.querySelector('details.project-deep');
+                    if (details) details.open = true;
+                }
+            }
+        })();
+    </script>
+</body>
+</html>

@@ -3,554 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>niugnep.me | Infrastructure Lab & Digital Workshop</title>
-    <meta name="description" content="Penguin's digital workshop - Infrastructure engineering, homelab experiments, and the ongoing quest to understand how things really work.">
-    <style>
-        :root {
-            --bg-dark: #0a0e1a;
-            --bg-medium: #141922;
-            --bg-light: #1e2431;
-            --accent-primary: #00ff88;
-            --accent-secondary: #00aaff;
-            --accent-warm: #ff6b35;
-            --text-primary: #e4e6eb;
-            --text-secondary: #8892a0;
-            --border-color: #2a3142;
-            --code-bg: #0d1117;
-            --success: #39d353;
-            --warning: #ffa500;
-            --error: #ff4444;
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Courier New', 'SF Mono', 'Monaco', monospace;
-            background: var(--bg-dark);
-            color: var(--text-primary);
-            line-height: 1.6;
-            overflow-x: hidden;
-        }
-
-        /* Matrix-style background animation */
-        .matrix-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            opacity: 0.03;
-            z-index: 0;
-            background-image: 
-                repeating-linear-gradient(
-                    0deg,
-                    transparent,
-                    transparent 2px,
-                    var(--accent-primary) 2px,
-                    var(--accent-primary) 4px
-                );
-            animation: matrix-scroll 20s linear infinite;
-        }
-
-        @keyframes matrix-scroll {
-            0% { transform: translateY(0); }
-            100% { transform: translateY(100px); }
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 20px;
-            position: relative;
-            z-index: 1;
-        }
-
-        /* Terminal-style header */
-        header {
-            padding: 2rem 0;
-            border-bottom: 1px solid var(--border-color);
-            background: linear-gradient(180deg, var(--bg-medium) 0%, var(--bg-dark) 100%);
-        }
-
-        .terminal-header {
-            background: var(--code-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 1rem;
-            font-family: 'Courier New', monospace;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-        }
-
-        .terminal-bar {
-            display: flex;
-            align-items: center;
-            margin-bottom: 1rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .terminal-dots {
-            display: flex;
-            gap: 8px;
-        }
-
-        .dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-        }
-
-        .dot.red { background: #ff5f56; }
-        .dot.yellow { background: #ffbd2e; }
-        .dot.green { background: #27c93f; }
-
-        .terminal-title {
-            flex: 1;
-            text-align: center;
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-        }
-
-        .terminal-content {
-            color: var(--accent-primary);
-        }
-
-        .prompt {
-            color: var(--text-secondary);
-        }
-
-        .command {
-            color: var(--accent-secondary);
-        }
-
-        .output {
-            color: var(--text-primary);
-            margin: 0.5rem 0;
-        }
-
-        .ascii-art {
-            color: var(--accent-primary);
-            font-size: 0.8rem;
-            line-height: 1.2;
-            margin: 1rem 0;
-            white-space: pre;
-        }
-
-        /* Navigation */
-        nav {
-            background: var(--bg-medium);
-            padding: 1rem 0;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            border-bottom: 1px solid var(--border-color);
-            backdrop-filter: blur(10px);
-            background: rgba(20, 25, 34, 0.95);
-        }
-
-        nav ul {
-            display: flex;
-            list-style: none;
-            gap: 2rem;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        nav a {
-            color: var(--text-secondary);
-            text-decoration: none;
-            transition: color 0.3s;
-            position: relative;
-            font-size: 0.95rem;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-        }
-
-        nav a:hover {
-            color: var(--accent-primary);
-        }
-
-        nav a::after {
-            content: '';
-            position: absolute;
-            bottom: -5px;
-            left: 0;
-            width: 0;
-            height: 1px;
-            background: var(--accent-primary);
-            transition: width 0.3s;
-        }
-
-        nav a:hover::after {
-            width: 100%;
-        }
-
-        /* Main content sections */
-        .content-section {
-            margin: 3rem 0;
-            padding: 2rem;
-            background: var(--bg-medium);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            position: relative;
-        }
-
-        .content-section::before {
-            content: attr(data-section);
-            position: absolute;
-            top: -12px;
-            left: 20px;
-            background: var(--bg-medium);
-            padding: 0 10px;
-            color: var(--accent-primary);
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-        }
-
-        h2 {
-            color: var(--accent-primary);
-            font-size: 1.8rem;
-            margin-bottom: 1.5rem;
-            font-weight: normal;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        h2::before {
-            content: '>';
-            color: var(--accent-secondary);
-        }
-
-        /* Status Dashboard */
-        .status-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin: 2rem 0;
-        }
-
-        .status-card {
-            background: var(--bg-light);
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            padding: 1rem;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .status-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 4px;
-            height: 100%;
-            background: var(--success);
-        }
-
-        .status-card.learning::before {
-            background: var(--warning);
-        }
-
-        .status-card.planned::before {
-            background: var(--accent-secondary);
-        }
-
-        .status-label {
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-        }
-
-        .status-value {
-            font-size: 1.5rem;
-            color: var(--accent-primary);
-            margin: 0.5rem 0;
-            font-weight: bold;
-        }
-
-        .status-detail {
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-        }
-
-        /* Project logs */
-        .project-log {
-            background: var(--code-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            position: relative;
-        }
-
-        .project-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 1rem;
-        }
-
-        .project-title {
-            color: var(--accent-secondary);
-            font-size: 1.3rem;
-            font-weight: normal;
-        }
-
-        .project-meta {
-            display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
-        }
-
-        .meta-tag {
-            background: var(--bg-light);
-            border: 1px solid var(--border-color);
-            padding: 0.25rem 0.75rem;
-            border-radius: 4px;
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-        }
-
-        .meta-tag.active {
-            border-color: var(--success);
-            color: var(--success);
-        }
-
-        .meta-tag.wip {
-            border-color: var(--warning);
-            color: var(--warning);
-        }
-
-        .project-description {
-            color: var(--text-primary);
-            margin-bottom: 1rem;
-            line-height: 1.8;
-        }
-
-        .project-details {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1rem;
-            margin-top: 1rem;
-            padding-top: 1rem;
-            border-top: 1px solid var(--border-color);
-        }
-
-        .detail-block {
-            background: var(--bg-medium);
-            padding: 0.75rem;
-            border-radius: 4px;
-        }
-
-        .detail-label {
-            color: var(--text-secondary);
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            margin-bottom: 0.25rem;
-        }
-
-        .detail-value {
-            color: var(--accent-primary);
-        }
-
-        /* Tech stack visualization */
-        .tech-stack {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            margin: 1rem 0;
-        }
-
-        .tech-badge {
-            background: transparent;
-            border: 1px solid var(--accent-primary);
-            color: var(--accent-primary);
-            padding: 0.25rem 0.75rem;
-            border-radius: 4px;
-            font-size: 0.85rem;
-            transition: all 0.3s;
-        }
-
-        .tech-badge:hover {
-            background: var(--accent-primary);
-            color: var(--bg-dark);
-            transform: translateY(-2px);
-        }
-
-        /* About/Philosophy section */
-        .philosophy-block {
-            background: linear-gradient(135deg, var(--bg-light), var(--bg-medium));
-            border-left: 3px solid var(--accent-primary);
-            padding: 1.5rem;
-            margin: 2rem 0;
-            border-radius: 4px;
-        }
-
-        .philosophy-block h3 {
-            color: var(--accent-primary);
-            margin-bottom: 1rem;
-            font-weight: normal;
-        }
-
-        .philosophy-block p {
-            color: var(--text-primary);
-            line-height: 1.8;
-        }
-
-        /* Contact section */
-        .contact-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
-            margin-top: 2rem;
-        }
-
-        .contact-method {
-            background: var(--bg-light);
-            border: 1px solid var(--border-color);
-            padding: 1.5rem;
-            border-radius: 4px;
-            transition: border-color 0.3s;
-        }
-
-        .contact-method:hover {
-            border-color: var(--accent-primary);
-        }
-
-        .contact-label {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .contact-value {
-            color: var(--accent-secondary);
-            font-size: 1.1rem;
-            word-break: break-all;
-        }
-
-        .contact-value a {
-            color: inherit;
-            text-decoration: none;
-        }
-
-        .contact-value a:hover {
-            color: var(--accent-primary);
-        }
-
-        .website-field {
-            position: absolute;
-            left: -9999px;
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        /* Lab notes / Blog style entries */
-        .lab-note {
-            background: var(--bg-light);
-            border: 1px solid var(--border-color);
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            border-radius: 4px;
-        }
-
-        .note-date {
-            color: var(--text-secondary);
-            font-size: 0.85rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .note-title {
-            color: var(--accent-secondary);
-            font-size: 1.2rem;
-            margin-bottom: 1rem;
-        }
-
-        .note-content {
-            color: var(--text-primary);
-            line-height: 1.8;
-        }
-
-        /* Footer */
-        footer {
-            margin-top: 4rem;
-            padding: 2rem 0;
-            border-top: 1px solid var(--border-color);
-            text-align: center;
-            color: var(--text-secondary);
-        }
-
-        .footer-links {
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
-            margin-bottom: 1rem;
-        }
-
-        .footer-links a {
-            color: var(--text-secondary);
-            text-decoration: none;
-            transition: color 0.3s;
-        }
-
-        .footer-links a:hover {
-            color: var(--accent-primary);
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .container {
-                padding: 0 15px;
-            }
-
-            nav ul {
-                gap: 1rem;
-            }
-
-            .content-section {
-                padding: 1.5rem 1rem;
-            }
-
-            .ascii-art {
-                font-size: 0.6rem;
-            }
-        }
-
-        /* Utility classes */
-        .blink {
-            animation: blink 1s infinite;
-        }
-
-        @keyframes blink {
-            0%, 50% { opacity: 1; }
-            51%, 100% { opacity: 0; }
-        }
-
-        .monospace {
-            font-family: 'Courier New', monospace;
-        }
-
-        code {
-            background: var(--code-bg);
-            color: var(--accent-primary);
-            padding: 0.2rem 0.4rem;
-            border-radius: 3px;
-            font-size: 0.9em;
-        }
-    </style>
+    <meta name="robots" content="index, follow, noai, noimageai, max-snippet:-1, max-image-preview:large">
+    <meta name="tdm-reservation" content="1">
+    <title>niugnep.me | Infrastructure Lab &amp; Digital Workshop</title>
+    <meta name="description" content="Infrastructure engineering, homelab experiments, and the ongoing quest to understand how things really work.">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="niugnep.me">
+    <meta property="og:title" content="niugnep.me | Infrastructure Lab &amp; Digital Workshop">
+    <meta property="og:description" content="Infrastructure engineering, homelab experiments, and the ongoing quest to understand how things really work.">
+    <meta property="og:url" content="https://niugnep.me/">
+    <meta name="twitter:card" content="summary">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2032%2032'%3E%3Crect%20width='32'%20height='32'%20rx='6'%20fill='%230a0e1a'/%3E%3Ctext%20x='16'%20y='23'%20font-family='monospace'%20font-size='18'%20fill='%2300ff88'%20text-anchor='middle'%3E%3E_%3C/text%3E%3C/svg%3E">
+    <link rel="stylesheet" href="/style.css">
 </head>
 <body>
     <div class="matrix-bg"></div>
-    
+
     <header>
         <div class="container">
             <div class="terminal-header">
@@ -567,7 +35,7 @@
                         <span class="prompt">$</span>
                         <span class="command"> whoami</span>
                     </div>
-                    <pre class="ascii-art">
+                    <pre class="ascii-art" role="img" aria-label="Penguin">
     ___                            _        
    / _ \  ___  _ __    __ _  _   _ (_) _ __  
   / /_)/ / _ \| '_ \  / _` || | | || || '_ \ 
@@ -596,12 +64,11 @@
     <nav>
         <div class="container">
             <ul>
-                <li><a href="#current">Current State</a></li>
-                <li><a href="#projects">Active Projects</a></li>
-                <li><a href="#lab">Lab Notes</a></li>
-                <li><a href="#philosophy">Philosophy</a></li>
-                <li><a href="#contact">Contact</a></li>
-                <li><a href="https://github.com/niugnepenguin" target="_blank">GitHub →</a></li>
+                <li><a href="/" aria-current="page">~/</a></li>
+                <li><a href="/projects.html">cd projects</a></li>
+                <li><a href="/notes.html">cd notes</a></li>
+                <li><a href="/about.html">cd about</a></li>
+                <li><a href="https://github.com/niugnepenguin" target="_blank" rel="noopener">gh →</a></li>
             </ul>
         </div>
     </nav>
@@ -609,244 +76,141 @@
     <div class="container">
         <section id="current" class="content-section" data-section="Current Status">
             <h2>System Status</h2>
-            
+
             <div class="status-grid">
                 <div class="status-card">
                     <div class="status-label">Current Role</div>
                     <div class="status-value">Infrastructure Engineer</div>
-                    <div class="status-detail">250 users, 8 LEO</div>
+                    <div class="status-detail">300 users, 11 LEO</div>
                     <div class="status-detail">ground game, new space</div>
                 </div>
-                
+
                 <div class="status-card">
                     <div class="status-label">Home Infra Backbone</div>
                     <div class="status-value">10G WAN+LAN, 120TB+ 3-2-1 df</div>
                     <div class="status-detail">Across prod and dev</div>
                 </div>
-                
+
                 <div class="status-card learning">
                     <div class="status-label">Currently Learning</div>
-                    <div class="status-value">Meshtastic / LoRa</div>
-                    <div class="status-detail">3 conferences, workshops</div>
+                    <div class="status-value">Local voice AI / Wyoming</div>
+                    <div class="status-detail">5 nodes live, zero egress, still tuning</div>
                 </div>
-                
+
                 <div class="status-card">
                     <div class="status-label">Deployment Efficiency</div>
                     <div class="status-value">↑ to the moon%</div>
-                    <div class="status-detail">Via automation & IaC</div>
+                    <div class="status-detail">Via automation &amp; IaC</div>
                 </div>
-                
+
                 <div class="status-card planned">
                     <div class="status-label">Next Project</div>
-                    <div class="status-value">AI Agent Orchestration</div>
-                    <div class="status-detail">Autonomous infra with local LLMs</div>
+                    <div class="status-value">Sealed Secrets → app-of-apps</div>
+                    <div class="status-detail">then kube-prometheus-stack, Loki, Gatus</div>
                 </div>
-                
+
                 <div class="status-card">
-                    <div class="status-label">Homelab Nodes</div>
-                    <div class="status-value">8+ on-prem nodes</div>
-                    <div class="status-detail">Proxmox + Talos</div>
+                    <div class="status-label">Speaking</div>
+                    <div class="status-value">Meshtastic / LoRa</div>
+                    <div class="status-detail">workshops @ BSides PDX + Seattle</div>
+                </div>
+
+                <div class="status-card">
+                    <div class="status-label">Inference Host</div>
+                    <div class="status-value">Framework 395+</div>
+                    <div class="status-detail">128GB RAM, 9-model roster</div>
                 </div>
             </div>
 
             <div class="philosophy-block">
                 <h3>// Current Focus Areas</h3>
-                <p>Deepening expertise in <code>GitOps workflows</code>, exploring <code>service mesh architectures</code>, and building more resilient <code>disaster recovery</code> patterns. Always asking "why" before implementing "how".</p>
+                <p>Closing the loop on <code>GitOps</code>: declarative secrets management so nothing lives outside git, then observability so the cluster can tell me it's unhappy before I notice. Alongside that, pushing <code>local-first AI</code> as far as it will go, across inference, voice, and automation that never leaves the building. Always asking "why" before implementing "how".</p>
             </div>
         </section>
 
-        <section id="projects" class="content-section" data-section="Active Projects">
-            <h2>Infrastructure Projects</h2>
-            
-            <div class="project-log">
-                <div class="project-header">
-                    <h3 class="project-title">Enterprise Network Transformation</h3>
-                    <div class="project-meta">
-                        <span class="meta-tag active">PRODUCTION</span>
-                        <span class="meta-tag">2024</span>
+        <section id="work" class="content-section" data-section="Selected Work">
+            <h2>Selected Work</h2>
+            <p class="section-intro">Three that cover the range. The full archive has the rest, including the ones that got retired on purpose.</p>
+
+            <div class="highlight-grid">
+                <a class="highlight-card" href="/projects.html#talos-gitops">
+                    <h3 class="highlight-title">Talos + ArgoCD GitOps Platform</h3>
+                    <p>Three-node bare-metal Kubernetes on Talos, every manifest reconciled from git. Traefik, cert-manager and MetalLB in front, plus a pre-commit gate built after a dangling reference took a host offline.</p>
+                    <div class="tech-stack">
+                        <span class="tech-badge">Talos Linux</span>
+                        <span class="tech-badge">Kubernetes</span>
+                        <span class="tech-badge">ArgoCD</span>
+                        <span class="tech-badge">Traefik</span>
                     </div>
-                </div>
-                <p class="project-description">
-                    Orchestrated complete ISP migration and network redesign across 17 sites, transitioning from /24 to /28 IP addressing scheme while maintaining zero downtime during business hours. This wasn't just a migration - it was a complete reimagining of our network topology.
-                </p>
-                <div class="project-details">
-                    <div class="detail-block">
-                        <div class="detail-label">Impact</div>
-                        <div class="detail-value">Zero downtime migration</div>
+                </a>
+
+                <a class="highlight-card" href="/projects.html#llm-host">
+                    <h3 class="highlight-title">LLM Inference Host</h3>
+                    <p>A Framework 395+ with 128GB of RAM running a nine-model roster with on-demand load and eviction. A systemd watcher hands the GPU back when a game launches.</p>
+                    <div class="tech-stack">
+                        <span class="tech-badge">llama.cpp</span>
+                        <span class="tech-badge">llama-swap</span>
+                        <span class="tech-badge">podman</span>
+                        <span class="tech-badge">systemd</span>
                     </div>
-                    <div class="detail-block">
-                        <div class="detail-label">Scale</div>
-                        <div class="detail-value">17 interconnected sites</div>
+                </a>
+
+                <a class="highlight-card" href="/projects.html#rf-survey">
+                    <h3 class="highlight-title">Wireless RF Re-engineering</h3>
+                    <p>A survey-driven fix for a 22-AP estate where 64 BSSIDs were stacked on a single channel. Halved the 2.4 GHz radio count, cut transmit power 11 dB, and reported WiFi issues went to zero and have stayed there.</p>
+                    <div class="tech-stack">
+                        <span class="tech-badge">802.11ax</span>
+                        <span class="tech-badge">6 GHz</span>
+                        <span class="tech-badge">DFS</span>
+                        <span class="tech-badge">RF Survey</span>
                     </div>
-                    <div class="detail-block">
-                        <div class="detail-label">Efficiency Gain</div>
-                        <div class="detail-value">75% IP space optimization</div>
-                    </div>
-                </div>
-                <div class="tech-stack">
-                    <span class="tech-badge">Cisco</span>
-                    <span class="tech-badge">Meraki</span>
-                    <span class="tech-badge">Python</span>
-                    <span class="tech-badge">Ansible</span>
-                    <span class="tech-badge">VLAN Segmentation</span>
-                </div>
+                </a>
             </div>
 
-            <div class="project-log">
-                <div class="project-header">
-                    <h3 class="project-title">Infrastructure as Code Implementation</h3>
-                    <div class="project-meta">
-                        <span class="meta-tag active">PRODUCTION</span>
-                        <span class="meta-tag wip">EXPANDING</span>
-                    </div>
-                </div>
-                <p class="project-description">
-                    Reduced deployment time for network/server policies by 90% through Ansible automation and CI/CD principles. What used to take hours of manual configuration now happens in minutes with full rollback capabilities.
-                </p>
-                <div class="project-details">
-                    <div class="detail-block">
-                        <div class="detail-label">Deployment Time</div>
-                        <div class="detail-value">-90% reduction</div>
-                    </div>
-                    <div class="detail-block">
-                        <div class="detail-label">Config Drift</div>
-                        <div class="detail-value">Eliminated</div>
-                    </div>
-                    <div class="detail-block">
-                        <div class="detail-label">Next Phase</div>
-                        <div class="detail-value">Terraform integration</div>
-                    </div>
-                </div>
-                <div class="tech-stack">
-                    <span class="tech-badge">Ansible</span>
-                    <span class="tech-badge">Git</span>
-                    <span class="tech-badge">CI/CD</span>
-                    <span class="tech-badge">YAML</span>
-                    <span class="tech-badge">Terraform</span>
-                </div>
-            </div>
-
-            <div class="project-log">
-                <div class="project-header">
-                    <h3 class="project-title">Homelab Kubernetes Cluster</h3>
-                    <div class="project-meta">
-                        <span class="meta-tag active">HOMELAB</span>
-                        <span class="meta-tag wip">ALWAYS EVOLVING</span>
-                    </div>
-                </div>
-                <p class="project-description">
-                    3-node bare-metal Kubernetes cluster running Talos Linux with GitOps workflows via ArgoCD. This is my playground for testing production patterns before deployment. Currently hosting 20+ services including Immich, n8n automation, and local LLM inference.
-                </p>
-                <div class="project-details">
-                    <div class="detail-block">
-                        <div class="detail-label">Nodes</div>
-                        <div class="detail-value">3x Physical Cluster</div>
-                    </div>
-                    <div class="detail-block">
-                        <div class="detail-label">Storage</div>
-                        <div class="detail-value">120TB NAS (RAID5)</div>
-                    </div>
-                    <div class="detail-block">
-                        <div class="detail-label">Services</div>
-                        <div class="detail-value">20+ containerized apps</div>
-                    </div>
-                </div>
-                <div class="tech-stack">
-                    <span class="tech-badge">Kubernetes</span>
-                    <span class="tech-badge">Talos Linux</span>
-                    <span class="tech-badge">ArgoCD</span>
-                    <span class="tech-badge">Traefik</span>
-                    <span class="tech-badge">MetalLB</span>
-                    <span class="tech-badge">Authentik</span>
-                </div>
+            <div class="section-more">
+                <a href="/projects.html">$ cat projects.html →</a>
             </div>
         </section>
 
-        <section id="lab" class="content-section" data-section="Lab Notes">
-            <h2>Recent Experiments & Thoughts</h2>
-            
-            <div class="lab-note">
-                <div class="note-date">2025.01.15</div>
-                <h3 class="note-title">GitOps: The Good, The Bad, The Git Revert</h3>
-                <div class="note-content">
-                    <p>Implemented ArgoCD across the homelab cluster. The good: declarative configs are magical when they work. The bad: when your git repo becomes source of truth, a bad commit means rapid automated failure. Learned to always test in dev namespace first. Always.</p>
-                    <p>Key takeaway: <code>git revert</code> is your friend, but proper branch protection is your best friend.</p>
-                </div>
-            </div>
-
-            <div class="lab-note">
-                <div class="note-date">2023.10.22</div>
-                <h3 class="note-title">Why Every Network Engineer Should Run a Homelab</h3>
-                <div class="note-content">
-                    <p>You can read all the documentation you want, but nothing beats breaking your own network at 2 AM. Currently running Proxmox, Talos, and enough VLANs to make my switch question its life choices. This week's lesson: MTU mismatches are sneaky.</p>
-                </div>
-            </div>
-
-            <div class="lab-note">
-                <div class="note-date">2024.09.30</div>
-                <h3 class="note-title">Local LLMs for Infrastructure Automation</h3>
-                <div class="note-content">
-                    <p>Deployed Ollama and Llama.cpp with local LLMs integrated into n8n workflows. Now have AI-assisted log analysis and automated incident summaries. CPU inference is painful, but privacy and data sovereignty make it worthwhile. GPU node deployed. Running llama-swap with Qwen3 and Nemotron models.</p>
-                </div>
-            </div>
-        </section>
-
-        <section id="philosophy" class="content-section" data-section="Philosophy">
-            <h2>Infrastructure Philosophy</h2>
-            
-            <div class="philosophy-block">
-                <h3>// On Understanding Systems</h3>
-                <p>"Know the why before the how" isn't just a catchphrase and it has saved me countless hours of fixing the wrong problem. Every system has a story, every architecture decision has context. Take the time to understand both.</p>
-            </div>
-
-            <div class="philosophy-block">
-                <h3>// On Automation</h3>
-                <p>Automate everything you do more than twice, but understand what you're automating first. The best automation comes from deep understanding of manual processes. Also, always include a manual override. Future you will thank present you.</p>
-            </div>
-
-            <div class="philosophy-block">
-                <h3>// On Learning</h3>
-                <p>The homelab isn't just about playing with tech. Your homelab is about having a safe space to fail spectacularly. Every outage is a lesson, every recovery is growth. Document everything, especially the failures.</p>
-            </div>
-
-            <div class="philosophy-block">
-                <h3>// On Digital Rights</h3>
-                <p>Infrastructure should be transparent, repairable, and under your control. Whether it's the right to repair hardware or the ability to audit code, ownership means actual ownership. This extends to data sovereignty it is your data, your rules.</p>
-            </div>
-        </section>
-
-       <section id="contact" class="content-section" data-section="Contact">
+        <section id="contact" class="content-section" data-section="Contact">
             <h2>Get In Touch</h2>
-            
+
             <div class="contact-grid">
                 <div class="contact-method">
-                    <div class="contact-label">// Email (obfuscated for the bots)</div>
+                    <div class="contact-label">// Email</div>
                     <div class="contact-value">
                         <span id="email-contact"></span>
-                        <script>
-                            (function() {
-                                const e1 = 'hello';
-                                const e2 = String.fromCharCode(64);
-                                const e3 = 'niugnep';
-                                const e4 = String.fromCharCode(46);
-                                const e5 = 'dev';
-                                const email = e1 + e2 + e3 + e4 + e5;
-                                const link = document.createElement('a');
-                                link.href = 'mailto:' + email;
-                                link.textContent = email;
-                                document.getElementById('email-contact').appendChild(link);
-                            })();
-                            
-
-                        </script>
                     </div>
-                    <!-- Honeypot: hidden form field catches bots -->
-                    <form action="mailto:hello@niugnep.dev" method="GET" style="display:none;" aria-hidden="true">
-                        <input type="text" name="website" class="website-field" tabindex="-1" autocomplete="off" />
-                    </form>
                 </div>
             </div>
         </section>
     </div>
+
+    <footer>
+        <div class="container">
+            <div class="footer-links">
+                <a href="/">home</a>
+                <a href="/projects.html">projects</a>
+                <a href="/notes.html">notes</a>
+                <a href="/about.html">about</a>
+                <a href="https://github.com/niugnepenguin" target="_blank" rel="noopener">github</a>
+            </div>
+            <div>Hand-written HTML. No trackers, no cookies, no third-party requests.</div>
+        </div>
+    </footer>
+
+    <script>
+        (function() {
+            const target = document.getElementById('email-contact');
+            if (!target) return;
+            const at = String.fromCharCode(64);
+            const dot = String.fromCharCode(46);
+            const address = 'hello' + at + 'niugnep' + dot + 'dev';
+            const link = document.createElement('a');
+            link.href = 'mail' + 'to:' + address;
+            link.textContent = address;
+            target.appendChild(link);
+        })();
+    </script>
 </body>
 </html>
