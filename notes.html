@@ -63,8 +63,9 @@
                 <div class="note-date">2026.08.20</div>
                 <h3 class="note-title">Read the Source, Not the Docs</h3>
                 <div class="note-content">
-                    <p>Spent an evening confused about why the local voice pipeline was sending so much to the model. The documentation for preferring local intent handling reads like a clean split: built-in intents get matched locally, everything else falls through to the LLM. The implementation disagrees. The filter deciding which intents qualify as "local" is far narrower than the name suggests, and a large share of what I assumed was handled locally was going straight to the model.</p>
+                    <p>Spent an evening confused about why the local voice pipeline was sending so much to the model. The documentation for preferring local intent handling reads like a clean split; the implementation disagrees, and the filter deciding which intents qualify is far narrower than the name suggests.</p>
                     <p>Twenty minutes in the pipeline source answered a question an hour of re-reading documentation had not. The docs weren't wrong, they were silent, and silence reads as agreement with whatever you already believed.</p>
+                    <div class="note-link"><a href="/projects.html#voice">$ cat projects.html#voice →</a></div>
                 </div>
             </div>
 
@@ -73,7 +74,8 @@
                 <h3 class="note-title">Prefill Isn't Linear</h3>
                 <div class="note-content">
                     <p>Benchmarking the inference host and found the thing that changes how I size context: time-to-first-token does not scale linearly with prompt length. Pushing toward 33k tokens, prefill cost grows noticeably faster than the token count does.</p>
-                    <p>Which makes context budget a latency decision as much as a memory one. "It fits in memory" and "it responds in a reasonable time" are separate questions, and I had been treating the first as though it answered the second. Prefix caching also does more for repeated-system-prompt workloads than any amount of quantisation fiddling.</p>
+                    <p>Which makes context budget a latency decision as much as a memory one. "It fits in memory" and "it responds in a reasonable time" are separate questions, and I had been treating the first as though it answered the second.</p>
+                    <div class="note-link"><a href="/projects.html#llm-host">$ cat projects.html#llm-host →</a></div>
                 </div>
             </div>
 
@@ -81,8 +83,9 @@
                 <div class="note-date">2026.08.18</div>
                 <h3 class="note-title">Killing a PoC On Purpose</h3>
                 <div class="note-content">
-                    <p>Shut down the on-demand large-model host today. It worked: socket activation, 25-second cold start, automatic fallback, all doing precisely what I designed. It was also spending roughly 106 GiB to produce 15.8 tokens per second, which a smaller model beats several times over on the same hardware.</p>
-                    <p>Retiring it properly cost an extra half hour: move the runbook to an archive directory, write down what it did, what it measured, why it is off, and what would have to change to make it worth revisiting. Without that last line, in six months I would have had the same clever idea and paid the same cost to reach the same conclusion.</p>
+                    <p>Shut down the on-demand large-model host today. It worked exactly as designed, and it was still spending roughly 106 GiB to produce 15.8 tokens per second, which a smaller model beats several times over on the same hardware.</p>
+                    <p>Retiring it properly cost an extra half hour of archiving and write-up. Without that, in six months I would have had the same clever idea and paid the same cost to reach the same conclusion.</p>
+                    <div class="note-link"><a href="/projects.html#ds4">$ cat projects.html#ds4 →</a></div>
                 </div>
             </div>
 
@@ -92,7 +95,7 @@
                 <div class="note-content">
                     <p>Found a manifest field written in the singular where the schema wanted the plural. Kubernetes accepted the object, silently discarded the field it did not recognise, and reported success. Everything looked applied. Nothing was. It had been that way for months.</p>
                     <p><code>kubeconform -strict</code> catches it instantly, because strict mode refuses unknown fields instead of ignoring them. "Ignore what you don't understand" is a reasonable principle for API compatibility and a terrible one for your own configuration.</p>
-                    <p>Related lesson from the same week: schema validation only ever checks files individually. A reference to a resource that no longer exists is valid YAML, passes schema, and takes a host offline. That needed its own cross-resource validator, which now runs in pre-commit. Both came out of an actual outage, which is the usual way tooling gets written.</p>
+                    <div class="note-link"><a href="/projects.html#talos-gitops">$ cat projects.html#talos-gitops →</a></div>
                 </div>
             </div>
 
@@ -101,7 +104,7 @@
                 <h3 class="note-title">Connection Pools Fail Silently</h3>
                 <div class="note-content">
                     <p>An authentication service that starts cleanly, works for a few minutes, then stops answering. No crash, no error, process still running and still listening. The cause was untuned LDAP connection pooling: pooled connections idled past the directory's timeout and quietly died, nothing tested them before handing them out, so live requests kept receiving dead handles.</p>
-                    <p>Every pooled connection is a cache, and every cache needs an answer to "when does an entry go stale, and what checks it before use?" If you cannot answer that, you have a silent-failure generator with excellent throughput metrics.</p>
+                    <div class="note-link"><a href="/projects.html#dot1x">$ cat projects.html#dot1x →</a></div>
                 </div>
             </div>
 
@@ -120,7 +123,7 @@
                 <div class="note-content">
                     <p>Ran Meshtastic workshops at BSides Portland last October and BSides Seattle in February, the format where everyone leaves with a node they built and configured themselves. The fastest way to find the holes in your own understanding is to stand in front of a room whose experience runs from zero to comfortable and try to explain spreading factor out loud.</p>
                     <p>Every session has produced at least one question I couldn't answer cleanly. Reading about airtime and duty cycle gives you the numbers. Being asked "but why" by somebody who has just watched their packet fail to arrive gives you the model.</p>
-                    <p>Mesh radio is networking with the comfortable abstractions removed. Same routing, same MTU, same retransmission, but propagation and battery budget are constraints you can't hand to somebody else, and the physical layer stops being a thing you get to assume works.</p>
+                    <div class="note-link"><a href="/projects.html#meshtastic">$ cat projects.html#meshtastic →</a></div>
                 </div>
             </div>
 
@@ -128,8 +131,8 @@
                 <div class="note-date">2025.01.15</div>
                 <h3 class="note-title">GitOps: The Good, The Bad, The Git Revert</h3>
                 <div class="note-content">
-                    <p>Implemented ArgoCD across the homelab cluster. The good: declarative configs are magical when they work. The bad: when your git repo becomes source of truth, a bad commit means rapid automated failure. Learned to always test in dev namespace first. Always.</p>
-                    <p>Key takeaway: <code>git revert</code> is your friend, but proper branch protection is your best friend.</p>
+                    <p>Implemented ArgoCD across the homelab cluster. Declarative config is excellent when it works, but once git is the source of truth a bad commit fails fast and automatically. Test in a dev namespace first.</p>
+                    <p><code>git revert</code> undoes the commit, but not the reconcile that already ran against it.</p>
                 </div>
             </div>
 
@@ -137,7 +140,7 @@
                 <div class="note-date">2024.09.30</div>
                 <h3 class="note-title">Local LLMs for Infrastructure Automation</h3>
                 <div class="note-content">
-                    <p>Deployed Ollama and Llama.cpp with local LLMs integrated into n8n workflows. Now have AI-assisted log analysis and automated incident summaries. CPU inference is painful, but privacy and data sovereignty make it worthwhile. GPU node deployed. Running llama-swap with Qwen3 and Nemotron models.</p>
+                    <p>Deployed Ollama and llama.cpp with local models wired into n8n workflows, giving me AI-assisted log analysis and automated incident summaries. CPU inference was slow enough to constrain what I could reasonably ask it to do, and worth it anyway to keep the logs in the building. Since replaced by a GPU node running llama-swap with Qwen3 and Nemotron.</p>
                 </div>
             </div>
 
@@ -145,7 +148,7 @@
                 <div class="note-date">2023.10.22</div>
                 <h3 class="note-title">Why Every Network Engineer Should Run a Homelab</h3>
                 <div class="note-content">
-                    <p>You can read all the documentation you want, but nothing beats breaking your own network at 2 AM. Currently running Proxmox, Talos, and enough VLANs to make my switch question its life choices. This week's lesson: MTU mismatches are sneaky.</p>
+                    <p>You can read all the documentation you want, but nothing teaches you a network like breaking your own at 2 AM. Currently running Proxmox, Talos, and enough VLANs to make my switch question its life choices. This week it was MTU mismatches: everything works until a packet is big enough to matter.</p>
                 </div>
             </div>
         </section>

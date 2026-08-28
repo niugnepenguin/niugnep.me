@@ -465,6 +465,21 @@ h2::before {
     line-height: 1.8;
 }
 
+.note-link {
+    margin-top: 1rem;
+    font-size: 0.9rem;
+}
+
+.note-link a {
+    color: var(--accent-secondary);
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.note-link a:hover {
+    color: var(--accent-primary);
+}
+
 /* Footer */
 footer {
     margin-top: 4rem;
