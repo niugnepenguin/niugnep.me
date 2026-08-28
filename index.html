@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; base-uri 'none'; form-action 'none'">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="index, follow, noai, noimageai, max-snippet:-1, max-image-preview:large">
     <meta name="tdm-reservation" content="1">
@@ -55,7 +56,7 @@
                         <span class="command"> systemctl status curiosity.service</span>
                     </div>
                     <div class="output">● curiosity.service - Perpetual Learning Daemon</div>
-                    <div class="output">   Active: <span style="color: var(--success);">active (running)</span> since 1993-06-09 04:20:00 PST; many years ago<span class="blink">_</span></div>
+                    <div class="output">   Active: <span class="output-ok">active (running)</span> since 1993-06-09 04:20:00 PST; many years ago<span class="blink">_</span></div>
                 </div>
             </div>
         </div>
@@ -199,18 +200,6 @@
         </div>
     </footer>
 
-    <script>
-        (function() {
-            const target = document.getElementById('email-contact');
-            if (!target) return;
-            const at = String.fromCharCode(64);
-            const dot = String.fromCharCode(46);
-            const address = 'hello' + at + 'niugnep' + dot + 'dev';
-            const link = document.createElement('a');
-            link.href = 'mail' + 'to:' + address;
-            link.textContent = address;
-            target.appendChild(link);
-        })();
-    </script>
+    <script src="/email.js"></script>
 </body>
 </html>

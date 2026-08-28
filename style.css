@@ -763,3 +763,7 @@ nav a[aria-current="page"]::after {
         transition-duration: 0.01ms !important;
     }
 }
+
+.output-ok {
+    color: var(--success);
+}
