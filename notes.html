@@ -61,10 +61,10 @@
 
             <div class="lab-note">
                 <div class="note-date">2026.11.25</div>
-                <h3 class="note-title">The Host Was Up, the Network Wasn't</h3>
+                <h3 class="note-title">Thirty Hours Off the Network</h3>
                 <div class="note-content">
-                    <p>The inference host went unreachable for most of a day and a half. The service on it never stopped: it answered its own local health checks the entire time. The host had quietly lost the network. After an access point event, its Wi-Fi 7 link kept reassociating and then going dark a few minutes later, in both directions, while still reporting itself as connected.</p>
-                    <p>The cascade made it look intermittent rather than dead. Lease renewals failed, the lease expired on schedule, and each full reconnect bought a few minutes of reachability before it went dark again. The monitoring history showed exactly those few-minute windows, which is how the timeline got reconstructed. A health check run from the host proves the process is alive. It proves nothing about whether anyone can reach it. The permanent fix is a cable.</p>
+                    <p>The inference host went unreachable for most of a day and a half. The service on it never stopped: it answered its own local health checks the entire time. The host had lost the network. After an access point event, its Wi-Fi 7 link kept reassociating and then going dark a few minutes later, in both directions, while still reporting itself as connected.</p>
+                    <p>The cascade made it look intermittent. Lease renewals failed, the lease expired on schedule, and each full reconnect bought a few minutes of reachability before it went dark again. The monitoring history showed exactly those few-minute windows, which is how the timeline got reconstructed. The ethernet port had shown no link since the previous reboot a month earlier, so the permanent fix is a cable.</p>
                     <div class="note-link"><a href="/projects.html#llm-host">$ cat projects.html#llm-host →</a></div>
                 </div>
             </div>
@@ -73,17 +73,17 @@
                 <div class="note-date">2026.11.25</div>
                 <h3 class="note-title">Deciding Not to Cluster</h3>
                 <div class="note-content">
-                    <p>The hypervisors have always been standalone, and a new host arriving was a natural moment to ask whether to cluster them. It is still possible with guests already running. But one host would have to be emptied first, and most of its guest IDs collide with another host's, so joining means renumbering and migrating a working estate in exchange for features the lab does not currently miss.</p>
-                    <p>So the answer is no, written down with the reason and the conditions that would change it. A declined option with no record gets proposed again from scratch, usually by me.</p>
+                    <p>The hypervisors have always been standalone, and when a new host arrived I checked whether they could still be clustered. They can, even with guests running. But one host would have to be emptied first, and most of its guest IDs collide with another host's, so joining means renumbering and migrating a working estate in exchange for features the lab does not currently miss.</p>
+                    <p>So the answer is no, written down with the reason and the conditions that would change it.</p>
                 </div>
             </div>
 
             <div class="lab-note">
                 <div class="note-date">2026.11.22</div>
-                <h3 class="note-title">DHCP Said Yes, the Firewall Said No</h3>
+                <h3 class="note-title">Port 53 on the Source Side</h3>
                 <div class="note-content">
                     <p>After moving DNS to a new server, one network segment had sent it zero queries in a day. Its clients were getting the right DNS server from DHCP, and their lookups timed out. A packet capture on the server showed nothing arriving, so the drop was upstream at the firewall. The allow rule had DNS port 53 set on the source as well as the destination. Clients send from a random high port, so the rule could never match.</p>
-                    <p>Nothing logged an error, because nothing failed loudly. The segment simply never arrived. The signal was a zero in the query statistics, and I only saw it because I went looking for each segment by name instead of glancing at the total. After a migration, count per source. A source that should be talking to you and isn't will never raise an alarm.</p>
+                    <p>Nothing logged an error, since no packet ever reached anything that would log one. The total query count looked healthy. I only caught it by checking the count per segment, where this one sat at zero.</p>
                 </div>
             </div>
 

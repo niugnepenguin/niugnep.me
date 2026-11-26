@@ -166,6 +166,47 @@
                 </details>
             </div>
 
+            <div class="project-log" id="field-carts" data-tags="PRODUCTION">
+                <div class="project-header">
+                    <h3 class="project-title">Field Test-Cart Connectivity</h3>
+                    <div class="project-meta">
+                        <span class="meta-tag active">PRODUCTION</span>
+                        <span class="meta-tag wip">DESIGN</span>
+                    </div>
+                </div>
+                <p class="project-description">
+                    A handful of mobile test carts reach home through VPN servers on one firewall, and that firewall is being retired. The redesign makes each cart a spoke on the same multi-site WAN the offices use, instead of hanging off one firewall. A cart has to keep its path back from wherever it sits, behind someone else's NAT and filtering, on wired, WiFi or a tethered phone, with no manual step when the uplink changes. The design doc keeps each decision open until the evidence for it is in. The biggest open one is whether each cart runs two tunnels for redundancy, which OpenWRT can do.
+                </p>
+                <div class="project-details">
+                    <div class="detail-block">
+                        <div class="detail-label">Uplinks</div>
+                        <div class="detail-value">Wired, WiFi, tethered phone</div>
+                    </div>
+                    <div class="detail-block">
+                        <div class="detail-label">Network Position</div>
+                        <div class="detail-value">Always behind third-party NAT</div>
+                    </div>
+                    <div class="detail-block">
+                        <div class="detail-label">Status</div>
+                        <div class="detail-value">Decision-gated design</div>
+                    </div>
+                </div>
+                <div class="tech-stack">
+                    <span class="tech-badge">IPsec</span>
+                    <span class="tech-badge">IKEv2</span>
+                    <span class="tech-badge">NAT-T</span>
+                    <span class="tech-badge">OpenWRT</span>
+                    <span class="tech-badge">strongSwan</span>
+                </div>
+                <details class="project-deep">
+                    <summary>What made it hard</summary>
+                    <div class="deep-body">
+                        <p>A past outage on this network hit only tunnels using NAT traversal. A cart behind someone else's NAT is always one of those, so giving every cart its own tunnel multiplies exactly that failure. Per-cart tunnels are still on the table, carrying that risk.</p>
+                        <p>The WAN side offers no mid-session roaming, so every uplink change means a full renegotiation, and a cart that hops from WiFi to a phone hotspot drops its tunnel while it does. The cart subnets, which used to live on one firewall, also have to fit into a routing table shared by every site and cloud.</p>
+                    </div>
+                </details>
+            </div>
+
             <div class="project-log" id="meshtastic" data-tags="COMMUNITY">
                 <div class="project-header">
                     <h3 class="project-title">Meshtastic / LoRa Mesh Networking</h3>
@@ -390,7 +431,7 @@
                     </div>
                 </div>
                 <p class="project-description">
-                    Metrics and alerting for the Talos cluster, installed the same way as everything else: an ArgoCD application reconciled from git. Prometheus, Alertmanager and Grafana sit inside the cluster and scrape every control-plane component on every node, plus the inference host, including its GPU. Getting the control plane visible on an immutable OS meant changing the machine config so those components would listen beyond localhost, then rebooting nodes one at a time with a health check between each.
+                    Metrics and alerting for the Talos cluster, installed like everything else in it, as an ArgoCD application reconciled from git. Prometheus, Alertmanager and Grafana sit inside the cluster and scrape every control-plane component on every node, plus the inference host, including its GPU. Getting the control plane visible on an immutable OS meant changing the machine config so those components would listen beyond localhost, then rebooting nodes one at a time with a health check between each.
                 </p>
                 <div class="project-details">
                     <div class="detail-block">
@@ -418,8 +459,7 @@
                     <summary>Two failures that both reported healthy</summary>
                     <div class="deep-body">
                         <p>Prometheus started and immediately failed to write. The volume was a host-path mount, the chart mounted a subdirectory of it, and the kubelet created that subdirectory as root and never applies group ownership to host paths, so the unprivileged process could not write to its own database. Alertmanager had the identical layout and only looked fine because it writes nothing at startup. The fix was to mount the volume root instead of a subdirectory.</p>
-                        <p>Four control-plane scrape jobs had zero targets while ArgoCD showed everything green. The chart builds those targets from hand-written Endpoints objects, and current ArgoCD excludes Endpoints from sync by default. The Services existed; the objects that told them where to point were never applied. No target at all looks different from a target that is down, and the difference is the clue. I replaced them with static scrape configs that do not depend on Endpoints.</p>
-                        <p>The lesson from both: "Healthy" in a GitOps dashboard means the objects you declared exist. It says nothing about whether they do their job, so the first check after a monitoring deploy is the target list, not the sync status.</p>
+                        <p>Four control-plane scrape jobs had zero targets while ArgoCD showed everything green. The chart builds those targets from hand-written Endpoints objects, and current ArgoCD excludes Endpoints from sync by default. The Services existed; the objects that told them where to point were never applied. In the targets page those jobs had no entries at all, not even down ones. I replaced them with static scrape configs that do not depend on Endpoints.</p>
                     </div>
                 </details>
             </div>
@@ -514,7 +554,7 @@
                     </div>
                 </div>
                 <p class="project-description">
-                    Replaced the commercial smart speaker with a pipeline that never leaves the building: wake word on the device, Whisper for speech-to-text, Qwen3.5-9b as the conversation agent, and Piper for speech synthesis, wired together in Home Assistant over Wyoming. Five nodes around the house run it, and it is in daily use for lights, state questions and open-ended ones. Satellites are ESPHome hardware doing on-device wake-word detection. The governing constraint is zero egress. The only component allowed to reach the internet is an opt-in web search tool, and even that goes through a self-hosted metasearch instance rather than straight to a search provider.
+                    Replaced the commercial smart speaker with a pipeline that never leaves the building: wake word on the device, Whisper for speech-to-text, Qwen3.5-9b as the conversation agent, and Piper for speech synthesis, wired together in Home Assistant over Wyoming. Five nodes around the house run it, and it is in daily use for lights, state questions and open-ended ones. Satellites are ESPHome hardware doing on-device wake-word detection. Nothing talks to the internet except an opt-in web search tool, and that goes through a self-hosted metasearch instance first.
                 </p>
                 <div class="project-details">
                     <div class="detail-block">
@@ -562,7 +602,7 @@
                     </div>
                 </div>
                 <p class="project-description">
-                    A home video archive with no subtitles, which made it hard to watch with the sound off. Whisper on the inference host now transcribes every file, and a muxer on a timer adds the result as a subtitle track to the original container without re-encoding. Nothing leaves the network. The full backfill finished with zero failures, every file kept its duration, streams and default flags, and new footage is picked up automatically.
+                    A home video archive with no subtitles, which made it hard to watch with the sound off. Whisper on the inference host now transcribes every file, and a muxer on a timer adds the result as a subtitle track to the original container without re-encoding or leaving the network. The full backfill finished with zero failures, every file kept its duration, streams and default flags, and new footage is picked up automatically.
                 </p>
                 <div class="project-details">
                     <div class="detail-block">
@@ -589,9 +629,9 @@
                 <details class="project-deep">
                     <summary>Auditing the output, and finding the egress</summary>
                     <div class="deep-body">
-                        <p>Zero failures says the pipeline ran, not that the subtitles are right. So I pulled a deliberate sample: the longest files, the ones with suspiciously few lines, and the ones touched by earlier fixes. Speech-heavy footage read accurately. Two hallucination classes turned up. A recording device's own spoken prompt was being subtitled as if someone had said it, sometimes as the only line in a file. And on music or wind noise, Whisper loops, emitting the same short phrase as dozens of back-to-back cues.</p>
-                        <p>The fix is a cleanup pass after timing correction that strips the known prompt and collapses near-identical cues that sit close together. Whisper is deterministic, so re-running only the affected files with their originals restored changed nothing except what the cleanup touched. That made the re-run cheap to verify.</p>
-                        <p>The audit also found something I was not looking for. The transcription library contacted its model hub for metadata on every model load. No audio left the network, but "internal only" means internal only, so the hub is now forced offline and a test clip confirmed it still transcribes with the outbound call gone.</p>
+                        <p>To check the subtitles themselves I pulled a deliberate sample: the longest files, the ones with suspiciously few lines, and the ones touched by earlier fixes. Speech-heavy footage read accurately. Two hallucination classes turned up. A recording device's own spoken prompt was being subtitled as if someone had said it, sometimes as the only line in a file. And on music or wind noise, Whisper loops, emitting the same short phrase as dozens of back-to-back cues.</p>
+                        <p>The fix is a cleanup pass after timing correction that strips the known prompt and collapses near-identical cues that sit close together. Whisper is deterministic, so re-running only the affected files with their originals restored changed nothing except what the cleanup touched.</p>
+                        <p>The audit also showed the transcription library contacting its model hub for metadata on every model load. No audio left the network. The hub is now forced offline, and a test clip still transcribes with the outbound call gone.</p>
                     </div>
                 </details>
             </div>
@@ -723,6 +763,45 @@
                         <p>Filtering out terminated hires sounds correct until you find that a rescinded offer flips to terminated while keeping its future start date, so a deny-list passes it through and forecasts a seat for somebody who is never arriving. Allow-listing the two statuses that mean "starting" is the same amount of code without that hole.</p>
                         <p>Zero employees back from the HR system means a broken query. The job exits non-zero instead of forecasting against nothing. Every implausible input needs a defined refusal.</p>
                         <p>All per-person reduction happens inside the query layer, so no individual's data reaches a shell variable, a log line, or a ticket body. The output is a count, which is all anything downstream needs.</p>
+                    </div>
+                </details>
+            </div>
+
+            <div class="project-log" id="cross-training" data-tags="PRODUCTION">
+                <div class="project-header">
+                    <h3 class="project-title">Bus-Factor Register</h3>
+                    <div class="project-meta">
+                        <span class="meta-tag active">PRODUCTION</span>
+                        <span class="meta-tag wip">IN PROGRESS</span>
+                    </div>
+                </div>
+                <p class="project-description">
+                    A year of cross-training other engineers left no written record, so there was no way to show who could run what. The register is a coverage matrix of system against person against depth, on a four-step scale: aware, runbook-capable, operator, deep. Only operator or above counts toward a system's bus factor, because following a runbook isn't enough during an outage. The target is two on every production system, and any system sitting at one is treated as a live risk. The register is still being filled in.
+                </p>
+                <div class="project-details">
+                    <div class="detail-block">
+                        <div class="detail-label">Counts Toward Bus Factor</div>
+                        <div class="detail-value">Operator or deeper</div>
+                    </div>
+                    <div class="detail-block">
+                        <div class="detail-label">Target</div>
+                        <div class="detail-value">2 on every prod system</div>
+                    </div>
+                    <div class="detail-block">
+                        <div class="detail-label">Logging Cost</div>
+                        <div class="detail-value">~3 minutes a session</div>
+                    </div>
+                </div>
+                <div class="tech-stack">
+                    <span class="tech-badge">Documentation</span>
+                    <span class="tech-badge">Knowledge Transfer</span>
+                    <span class="tech-badge">Risk Register</span>
+                </div>
+                <details class="project-deep">
+                    <summary>The session template</summary>
+                    <div class="deep-body">
+                        <p>Each training session gets a short template. When the full template feels like too much, three fields are enough: what system, who, and what they can now do without me.</p>
+                        <p>People appear by role label instead of name, so the matrix can go into a handoff doc or a review packet without being edited first.</p>
                     </div>
                 </details>
             </div>
