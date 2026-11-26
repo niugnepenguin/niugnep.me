@@ -64,7 +64,7 @@
                 <h3 class="note-title">Thirty Hours Off the Network</h3>
                 <div class="note-content">
                     <p>The inference host went unreachable for most of a day and a half. The service on it never stopped: it answered its own local health checks the entire time. The host had lost the network. After an access point event, its Wi-Fi 7 link kept reassociating and then going dark a few minutes later, in both directions, while still reporting itself as connected.</p>
-                    <p>The cascade made it look intermittent. Lease renewals failed, the lease expired on schedule, and each full reconnect bought a few minutes of reachability before it went dark again. The monitoring history showed exactly those few-minute windows, which is how the timeline got reconstructed. The ethernet port had shown no link since the previous reboot a month earlier, so the permanent fix is a cable.</p>
+                    <p>The cascade made it look intermittent. Lease renewals failed, the lease expired on schedule, and each full reconnect bought a few minutes of reachability before it went dark again. The monitoring history showed exactly those few-minute windows, which is how the timeline got reconstructed. The ethernet port had shown no link since the previous reboot a month earlier, so the permanent fix is a cable. It's always L1 isn't it?</p>
                     <div class="note-link"><a href="/projects.html#llm-host">$ cat projects.html#llm-host →</a></div>
                 </div>
             </div>
@@ -74,7 +74,7 @@
                 <h3 class="note-title">Deciding Not to Cluster</h3>
                 <div class="note-content">
                     <p>The hypervisors have always been standalone, and when a new host arrived I checked whether they could still be clustered. They can, even with guests running. But one host would have to be emptied first, and most of its guest IDs collide with another host's, so joining means renumbering and migrating a working estate in exchange for features the lab does not currently miss.</p>
-                    <p>So the answer is no, written down with the reason and the conditions that would change it.</p>
+                    <p>So the answer is no; when my local kubernetes cluster exists what major knowledge gains or benefits would I really gain anyways?</p>
                 </div>
             </div>
 
@@ -91,7 +91,7 @@
                 <div class="note-date">2026.08.20</div>
                 <h3 class="note-title">Read the Source, Not the Docs</h3>
                 <div class="note-content">
-                    <p>Spent an evening confused about why the local voice pipeline was sending so much to the model. The documentation for preferring local intent handling reads like a clean split; the implementation disagrees, and the filter deciding which intents qualify is far narrower than the name suggests.</p>
+                    <p>Spent an evening confused about why the local voice pipeline was sending so much to the model. The documentation for preferring local intent handling reads like a clean split; the implementation is at odds with this, and the filter deciding which intents qualify is far narrower than the name suggests.</p>
                     <p>Twenty minutes in the pipeline source answered a question an hour of re-reading documentation had not. The docs weren't wrong, they were silent, and silence reads as agreement with whatever you already believed.</p>
                     <div class="note-link"><a href="/projects.html#voice">$ cat projects.html#voice →</a></div>
                 </div>
