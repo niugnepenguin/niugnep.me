@@ -381,6 +381,49 @@
                 </details>
             </div>
 
+            <div class="project-log" id="observability" data-tags="HOMELAB">
+                <div class="project-header">
+                    <h3 class="project-title">Cluster Observability</h3>
+                    <div class="project-meta">
+                        <span class="meta-tag active">HOMELAB</span>
+                        <span class="meta-tag">2026</span>
+                    </div>
+                </div>
+                <p class="project-description">
+                    Metrics and alerting for the Talos cluster, installed the same way as everything else: an ArgoCD application reconciled from git. Prometheus, Alertmanager and Grafana sit inside the cluster and scrape every control-plane component on every node, plus the inference host, including its GPU. Getting the control plane visible on an immutable OS meant changing the machine config so those components would listen beyond localhost, then rebooting nodes one at a time with a health check between each.
+                </p>
+                <div class="project-details">
+                    <div class="detail-block">
+                        <div class="detail-label">Install</div>
+                        <div class="detail-value">GitOps, Helm via ArgoCD</div>
+                    </div>
+                    <div class="detail-block">
+                        <div class="detail-label">Coverage</div>
+                        <div class="detail-value">Full control plane + GPU host</div>
+                    </div>
+                    <div class="detail-block">
+                        <div class="detail-label">Rollout</div>
+                        <div class="detail-value">Rolling reboots, no outage</div>
+                    </div>
+                </div>
+                <div class="tech-stack">
+                    <span class="tech-badge">Prometheus</span>
+                    <span class="tech-badge">Grafana</span>
+                    <span class="tech-badge">Alertmanager</span>
+                    <span class="tech-badge">ArgoCD</span>
+                    <span class="tech-badge">Talos Linux</span>
+                    <span class="tech-badge">node_exporter</span>
+                </div>
+                <details class="project-deep">
+                    <summary>Two failures that both reported healthy</summary>
+                    <div class="deep-body">
+                        <p>Prometheus started and immediately failed to write. The volume was a host-path mount, the chart mounted a subdirectory of it, and the kubelet created that subdirectory as root and never applies group ownership to host paths, so the unprivileged process could not write to its own database. Alertmanager had the identical layout and only looked fine because it writes nothing at startup. The fix was to mount the volume root instead of a subdirectory.</p>
+                        <p>Four control-plane scrape jobs had zero targets while ArgoCD showed everything green. The chart builds those targets from hand-written Endpoints objects, and current ArgoCD excludes Endpoints from sync by default. The Services existed; the objects that told them where to point were never applied. No target at all looks different from a target that is down, and the difference is the clue. I replaced them with static scrape configs that do not depend on Endpoints.</p>
+                        <p>The lesson from both: "Healthy" in a GitOps dashboard means the objects you declared exist. It says nothing about whether they do their job, so the first check after a monitoring deploy is the target list, not the sync status.</p>
+                    </div>
+                </details>
+            </div>
+
             <div class="project-log" id="iac" data-tags="PRODUCTION">
                 <div class="project-header">
                     <h3 class="project-title">Infrastructure as Code</h3>
@@ -471,7 +514,7 @@
                     </div>
                 </div>
                 <p class="project-description">
-                    Replaced the commercial smart speaker with a pipeline that never leaves the building: wake word on the device, Whisper for speech-to-text, Qwen3.5-9b as the conversation agent, and Piper for speech synthesis, wired together in Home Assistant over Wyoming. Five nodes around the house run it. Satellites are ESPHome hardware doing on-device wake-word detection. The governing constraint is zero egress, and the only component allowed to reach the internet is an opt-in search tool.
+                    Replaced the commercial smart speaker with a pipeline that never leaves the building: wake word on the device, Whisper for speech-to-text, Qwen3.5-9b as the conversation agent, and Piper for speech synthesis, wired together in Home Assistant over Wyoming. Five nodes around the house run it, and it is in daily use for lights, state questions and open-ended ones. Satellites are ESPHome hardware doing on-device wake-word detection. The governing constraint is zero egress. The only component allowed to reach the internet is an opt-in web search tool, and even that goes through a self-hosted metasearch instance rather than straight to a search provider.
                 </p>
                 <div class="project-details">
                     <div class="detail-block">
@@ -485,6 +528,10 @@
                     <div class="detail-block">
                         <div class="detail-label">Coverage</div>
                         <div class="detail-value">5 nodes around the house</div>
+                    </div>
+                    <div class="detail-block">
+                        <div class="detail-label">Warm Reply</div>
+                        <div class="detail-value">~0.6s, 47.7 tok/s</div>
                     </div>
                 </div>
                 <div class="tech-stack">
@@ -501,6 +548,50 @@
                     <div class="deep-body">
                         <p>I had assumed that preferring local intent handling meant the model only ever saw requests the built-in matcher could not resolve. The documentation reads that way. The implementation does not: the filter deciding which intents qualify is much narrower than its name suggests, and far more was reaching the model than I had designed for. Reading the pipeline code corrected the design. Re-reading the documentation would not have, because it was silent rather than wrong.</p>
                         <p>Tool-call reliability is still the rough edge. A small local model asked to hold a natural conversation and emit well-formed tool calls will do one of those well at a time, so choosing the model was mostly choosing which failure I could live with. It runs in production regardless, because an assistant that occasionally fumbles a tool call still beats one that ships every utterance in the house to somebody else. The runbook has not caught up with the deployment yet.</p>
+                        <p>Speed came from moving the conversation model back onto the GPU once the large-model PoC was retired, and from a build that supports speculative decoding. Generation went from 16.8 to 47.7 tokens per second, and a short spoken reply now completes in about 0.6 seconds warm. The model is pinned resident with the highest eviction cost on the host, so a big coding model loading elsewhere never makes the house wait.</p>
+                    </div>
+                </details>
+            </div>
+
+            <div class="project-log" id="subtitles" data-tags="HOMELAB">
+                <div class="project-header">
+                    <h3 class="project-title">Local AI Subtitle Pipeline</h3>
+                    <div class="project-meta">
+                        <span class="meta-tag active">HOMELAB</span>
+                        <span class="meta-tag">IN PROD</span>
+                    </div>
+                </div>
+                <p class="project-description">
+                    A home video archive with no subtitles, which made it hard to watch with the sound off. Whisper on the inference host now transcribes every file, and a muxer on a timer adds the result as a subtitle track to the original container without re-encoding. Nothing leaves the network. The full backfill finished with zero failures, every file kept its duration, streams and default flags, and new footage is picked up automatically.
+                </p>
+                <div class="project-details">
+                    <div class="detail-block">
+                        <div class="detail-label">Backfill</div>
+                        <div class="detail-value">Complete, 0 failures</div>
+                    </div>
+                    <div class="detail-block">
+                        <div class="detail-label">Output</div>
+                        <div class="detail-value">Muxed track, no re-encode</div>
+                    </div>
+                    <div class="detail-block">
+                        <div class="detail-label">Egress</div>
+                        <div class="detail-value">None, verified</div>
+                    </div>
+                </div>
+                <div class="tech-stack">
+                    <span class="tech-badge">Whisper</span>
+                    <span class="tech-badge">faster-whisper</span>
+                    <span class="tech-badge">ffmpeg</span>
+                    <span class="tech-badge">Python</span>
+                    <span class="tech-badge">podman</span>
+                    <span class="tech-badge">systemd</span>
+                </div>
+                <details class="project-deep">
+                    <summary>Auditing the output, and finding the egress</summary>
+                    <div class="deep-body">
+                        <p>Zero failures says the pipeline ran, not that the subtitles are right. So I pulled a deliberate sample: the longest files, the ones with suspiciously few lines, and the ones touched by earlier fixes. Speech-heavy footage read accurately. Two hallucination classes turned up. A recording device's own spoken prompt was being subtitled as if someone had said it, sometimes as the only line in a file. And on music or wind noise, Whisper loops, emitting the same short phrase as dozens of back-to-back cues.</p>
+                        <p>The fix is a cleanup pass after timing correction that strips the known prompt and collapses near-identical cues that sit close together. Whisper is deterministic, so re-running only the affected files with their originals restored changed nothing except what the cleanup touched. That made the re-run cheap to verify.</p>
+                        <p>The audit also found something I was not looking for. The transcription library contacted its model hub for metadata on every model load. No audio left the network, but "internal only" means internal only, so the hub is now forced offline and a test clip confirmed it still transcribes with the outbound call gone.</p>
                     </div>
                 </details>
             </div>
